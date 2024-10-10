@@ -1,5 +1,5 @@
 const express = require('express');
-const { saveParticipation, checkAttendance, login, logout, deleteUser } = require('./controller.user');
+const { saveParticipation, checkAttendance, login, logout, deleteUser ,checkMyInfo} = require('./controller.user');
 
 const router = express.Router()
 
