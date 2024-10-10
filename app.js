@@ -6,13 +6,37 @@ const path = require('path');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const nunjucks = require('nunjucks');
+const passport = require('passport')
 
 const routes = require('./src/routes')
 
 const { sequelize } = require('./src/database');
 
 const app = express();
+
 app.set('port', process.env.PORT || 9999);
+
+app.use(express.static(path.join(__dirname , 'public')))
+
+app.set('view engine', 'html');
+
+nunjucks.configure('./src/views', {
+  autoescape : true,
+  express: app,
+  watch: true,
+});
+
+const sessionMiddleware = session({
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+});
+
 
 sequelize.sync({ force: false })
   .then(() => {
@@ -26,6 +50,8 @@ sequelize.sync({ force: false })
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(sessionMiddleware);
 
 app.use('/', routes)
 

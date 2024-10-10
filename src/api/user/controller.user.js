@@ -7,7 +7,9 @@ const checkAttendanceList = require("./service.user/checkAttendanceList");
 const checkParticipationDuplication = require("./service.user/checkParticipationDuplication");
 const saveParticipationRecord = require("./service.user/saveParticipationRecord");
 const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByUserId')
-const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList')
+const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
+const deleteUserInfo = require("../../database/user/dao/deleteUserInfo");
+const findUserById = require("../../database/user/dao/findUserById");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;
@@ -82,11 +84,32 @@ const logout = async (req,res,next) => {
     }
 }
 
+const deleteUser = async(req,res) => {
+    try{
+        const {user_id} = req.decoded
+        await deleteUserInfo(user_id)
+        
+        res.status(200).json({message : 'user delete successfully'})
+    } catch(err){
+        res.status(500).json({error : err.message})
+    }
+}
 
+const checkMyInfo = async(req,res) => {
+    const {user_id} = req.decoded
+    try{
+        const user = await findUserById(user_id)
+        res.status(200).json(user)
+    }catch(err){
+        res.status(500).json({err : err.message})
+    }
+}
 
 module.exports = {
     checkAttendance,
     saveParticipation,
     login,
     logout,
+    deleteUser,
+    checkMyInfo
 }
