@@ -10,6 +10,7 @@ const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByU
 const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
 const deleteUserInfo = require("../../database/user/dao/deleteUserInfo");
 const findUserById = require("../../database/user/dao/findUserById");
+const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;
@@ -98,8 +99,9 @@ const deleteUser = async(req,res) => {
 const checkMyInfo = async(req,res) => {
     const {user_id} = req.decoded
     try{
-        const user = await findUserById(user_id)
-        res.status(200).json(user)
+        const encrypt_user_info = await findUserById(user_id)
+        const decrypt_user_info = await decryptUserInfo([encrypt_user_info])
+        res.status(200).json(decrypt_user_info)
     }catch(err){
         res.status(500).json({err : err.message})
     }
