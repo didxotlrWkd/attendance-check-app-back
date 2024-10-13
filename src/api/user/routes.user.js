@@ -1,5 +1,5 @@
 const express = require('express');
-const { saveParticipation, checkAttendance, login, logout, deleteUser ,checkMyInfo} = require('./controller.user');
+const { saveParticipation, checkAttendance, login, logout, deleteUser ,checkMyInfo, checkEventList} = require('./controller.user');
 
 const router = express.Router()
 
@@ -18,6 +18,8 @@ router.post('/attendance', saveParticipation)
 router.get('/logout', logout)
 
 router.get('/setting/info', checkMyInfo)
+
+router.get('/event/list', checkEventList )
 
 router.delete('/', deleteUser)
 

@@ -11,6 +11,7 @@ const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBla
 const deleteUserInfo = require("../../database/user/dao/deleteUserInfo");
 const findUserById = require("../../database/user/dao/findUserById");
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
+const getAllEvents = require("../../database/event/dao/getAllEvents");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;
@@ -107,11 +108,21 @@ const checkMyInfo = async(req,res) => {
     }
 }
 
+const checkEventList = async(req,res) => {
+    try{
+        const event_list = await getAllEvents()
+        return res.status(200).json(event_list)
+    }catch(err){
+        return res.status(500).json({err : err.message})
+    }
+}
+
 module.exports = {
     checkAttendance,
     saveParticipation,
     login,
     logout,
     deleteUser,
+    checkEventList,
     checkMyInfo
 }

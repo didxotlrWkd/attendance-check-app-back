@@ -29,7 +29,7 @@ router.get('/event/create', isLoggedIn, addEventPage)
 
 router.post('/event', isLoggedIn, addEvent)
 
-router.get('/download/student-info', downloadExcel)
+router.get('/download/student-info',isLoggedIn, downloadExcel)
 
 router.get('/logout', isLoggedIn, logout)
 
