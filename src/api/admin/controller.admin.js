@@ -1,12 +1,14 @@
 require('dotenv').config()
-const { where } = require('sequelize');
-const { User, sequelize, Sequelize } = require('../../database');
+const checkEventByEventCode = require('../../database/event/dao/checkEventByEventCode');
+const createEvent = require('../../database/event/dao/createEvent');
+const getAllEvents = require('../../database/event/dao/getAllEvents');
+const modifyEvent = require('../../database/event/dao/modifyEvent');
 const checkUserInfoByParticipantCount = require('../../database/user/dao/checkUserInfoByParticipantCount');
 const drawRandomUserSelectedNumber = require('../../database/user/dao/drawRandomUserSelectedNumber');
 const findUserByStudentCode = require('../../database/user/dao/findUserByStudentCode');
 const { decrypt, encrypt } = require('../../utils/crypt');
+const createExelFile = require('./service.admin/createExelFile');
 const decryptUserInfo = require('./service.admin/decryptUserInfo');
-const path = require('path')
 
 const loginPage = async (req, res, next) => {
     try {
@@ -52,6 +54,7 @@ const checkAllUserInfo = async (req, res) => {
         })
 
     } catch (err) {
+        console.error(err)
         res.status(500).json({ error: err.message });
     }
 };
@@ -87,7 +90,7 @@ const searchSpecificUser = async (req, res) => {
             users: decrypt_user_info
         })
     } catch (err) {
-        res.status(500).json({ error: err.message })
+        return res.render('adminDashboard')
     }
 }
 
@@ -99,13 +102,105 @@ const drawRandomUserPage = async (req, res) => {
     }
 }
 
+const searchEvents = async(req,res) => {
+    try{
+        const events = await getAllEvents()
+        
+        return res.render('eventPage', {
+            events : events
+        })
+    } catch(err){
+        console.error(err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+const editEventPage = async (req, res) => {
+    const {event_code} = req.query; 
+    try{
+        const event = await checkEventByEventCode(event_code)
+        return res.render('editEventPage', { event }); 
+    } catch(err){
+        console.error(err)
+        return res.status(500).json({ error: err.message })
+    } 
+};
+
+const editEvent = async(req,res) => {
+    const {event_code , event_name, location , event_time} = req.body
+    try{
+        await modifyEvent({event_code , event_name, location , event_time})
+        const events = await getAllEvents()
+        
+        return res.render('eventPage', {
+            events : events
+        })
+    } catch(err){
+        console.error(err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+const addEventPage = async(req,res) => {
+    try{
+        return res.render('addEventPage')
+    }catch(err){
+        console.error(err)
+    }
+}
+
+const addEvent = async(req,res) => {
+    
+    const {event_code , event_name, location , event_time} = req.body
+
+    try{
+
+        const event = await checkEventByEventCode(event_code)
+
+        if(event){
+            return res.render('eventPage', {
+                error: '중복된 행사 코드입니다.', // 에러 메시지
+                events: await getAllEvents() // 기존 이벤트 목록 가져오기
+            });
+        }
+
+        await createEvent({event_code , event_name, location , event_time})
+        const events = await getAllEvents()
+        
+        return res.render('eventPage', {
+            events : events
+        })
+    }catch(err){
+        console.error(err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
 const logout = async (req, res) => {
     try {
-
         req.session.destroy();
         res.redirect('/admin');
     } catch (err) {
         res.status(500).json({ error: err.message })
+    }
+}
+
+const downloadExcel = async(req,res) => {
+
+    try{
+        const encrypt_user_info = await checkUserInfoByParticipantCount()
+        const decrypt_user_info = await decryptUserInfo(encrypt_user_info)
+        const excelPath = await createExelFile(decrypt_user_info)
+
+        res.download(excelPath, (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('파일 다운로드에 실패했습니다.');
+            }
+        });
+    }catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
 }
 
@@ -118,5 +213,11 @@ module.exports = {
     loginPage,
     mainPage,
     drawRandomUserPage,
+    searchEvents,
+    editEventPage,
+    addEventPage,
+    addEvent,
+    editEvent,
+    downloadExcel,
     logout,
 }

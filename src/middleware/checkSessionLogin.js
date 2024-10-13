@@ -1,15 +1,15 @@
 exports.isLoggedIn = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (req.session.isLoggedIn) {
         next();
     } else {
-        res.redirect('/?loginError=로그인이 필요합니다.');
+        res.redirect('/admin/login');
     }
 };
 
 exports.isNotLoggedIn = (req, res, next) => {
-    if (!req.isAuthenticated()) {
+    if (!req.session.isLoggedIn) {
         next();
     } else {
-        res.redirect('/');
+        res.redirect('/admin');
     }
 };
