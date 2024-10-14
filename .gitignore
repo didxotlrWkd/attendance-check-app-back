@@ -3,5 +3,6 @@ package-lock.json/
 sequelize-cli/
 .env
 .npm
-config.json
 *.xlsx
+config/
+
