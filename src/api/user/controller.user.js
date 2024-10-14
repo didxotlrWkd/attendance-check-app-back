@@ -12,6 +12,7 @@ const deleteUserInfo = require("../../database/user/dao/deleteUserInfo");
 const findUserById = require("../../database/user/dao/findUserById");
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
 const getAllEvents = require("../../database/event/dao/getAllEvents");
+const checkEventWithParticipant = require("../../database/event/dao/checkEventWithParticipant");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;
@@ -109,8 +110,11 @@ const checkMyInfo = async(req,res) => {
 }
 
 const checkEventList = async(req,res) => {
+
+    const {user_id} = req.decoded
+
     try{
-        const event_list = await getAllEvents()
+        const event_list = await checkEventWithParticipant(user_id)
         return res.status(200).json(event_list)
     }catch(err){
         return res.status(500).json({err : err.message})
