@@ -127,9 +127,9 @@ const editEventPage = async (req, res) => {
 };
 
 const editEvent = async(req,res) => {
-    const {event_code , event_name, location , event_time} = req.body
+    const {event_code , description, event_name, location , event_start_time, event_end_time} = req.body
     try{
-        await modifyEvent({event_code , event_name, location , event_time})
+        await modifyEvent({event_code , description, event_name, location , event_start_time, event_end_time})
         const events = await getAllEvents()
         
         return res.render('eventPage', {
@@ -151,7 +151,7 @@ const addEventPage = async(req,res) => {
 
 const addEvent = async(req,res) => {
     
-    const {event_code , event_name, location , event_time} = req.body
+    const {event_code , event_name, description, location , event_start_time, event_end_time} = req.body
 
     try{
 
@@ -164,7 +164,7 @@ const addEvent = async(req,res) => {
             });
         }
 
-        await createEvent({event_code , event_name, location , event_time})
+        await createEvent({event_code , event_name, description, location , event_start_time, event_end_time})
         const events = await getAllEvents()
         
         return res.render('eventPage', {

@@ -1,6 +1,6 @@
 const { Event } = require('../..');
 
-module.exports = async ({ event_code, event_name, location, event_time }) => {
+module.exports = async ({ event_code, event_name, description , location, event_start_time,event_end_time }) => {
     try {
         // 이벤트 코드로 특정 이벤트를 찾기
         const event = await Event.findOne({ where: { event_code } });
@@ -11,9 +11,11 @@ module.exports = async ({ event_code, event_name, location, event_time }) => {
         }
 
         // 이벤트 정보 수정
+        event.description = description;
         event.event_name = event_name;
         event.location = location;
-        event.event_time = event_time;
+        event.event_start_time = event_start_time;
+        event.event_end_time = event_end_time;
 
         // 변경사항 저장
         await event.save();

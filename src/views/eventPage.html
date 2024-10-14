@@ -71,8 +71,10 @@ h2 {
             <tr>
                 <th>행사 코드</th>
                 <th>행사 이름</th>
+                <th>설명</th>
                 <th>행사 장소</th>
-                <th>행사 시간</th>
+                <th>행사 시작 시간</th>
+                <th>행사 종료 시간</th>
                 <th>수정</th>
             </tr>
         </thead>
@@ -81,9 +83,13 @@ h2 {
             <tr>
                 <td>{{ event.event_code }}</td>
                 <td>{{ event.event_name }}</td>
+                <td>{{ event.description }}</td>
                 <td>{{ event.location }}</td>
                 <td>
-                    <span class="formatted-time" data-event-time="{{ event.event_time }}"></span>
+                    <span class="formatted-time" data-event-time="{{ event.event_start_time }}"></span>
+                </td>
+                <td>
+                    <span class="formatted-time" data-event-time="{{ event.event_end_time }}"></span>
                 </td>
                 <td>
                     <button onclick="location.href='/admin/event/edit?event_code={{event.event_code}}'">수정</button>

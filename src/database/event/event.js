@@ -15,13 +15,23 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull : false,
                 unique : true
             },
+
+            description : {
+                type : DataTypes.STRING,
+                allowNull : false,
+            },
             
             location : {
                 type : DataTypes.STRING,
                 allowNull : false
             },
 
-            event_time : {
+            event_start_time : {
+                type : DataTypes.DATE,
+                allowNull : false,
+            },
+
+            event_end_time : {
                 type : DataTypes.DATE,
                 allowNull : false,
             }
