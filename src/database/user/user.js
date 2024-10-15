@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue : 0
             }
         },
+        {
+            paranoid: true,
+        }
+
     )
 
     user.associate = (models) => {
