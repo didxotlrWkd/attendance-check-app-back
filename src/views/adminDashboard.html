@@ -146,16 +146,16 @@
 
     <button class="btn" onclick="location.href='/admin/download/student-info'">학생 데이터 다운로드</button>
 
-    <h2>유저 검색</h2>
+    <h2>학생 검색</h2>
     <form action="/admin/search/specific-user" method="POST" class="mb-3">
         <div class="form-group">
             <label for="student_code">학번</label>
             <input type="text" class="form-control" id="student_code" name="student_code" required>
         </div>
-        <button type="submit" class="btn">유저 확인</button>
+        <button type="submit" class="btn">학생 확인</button>
     </form>
 
-    <h2>유저 목록</h2>
+    <h2>학생 목록</h2>
     <button class="btn" id="sortBtn" onclick="sortTable()">참여횟수 정렬하기</button>
     <table class="table" id="userTable">
         <thead>
