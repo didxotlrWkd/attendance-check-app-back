@@ -2,6 +2,7 @@ const express = require('express')
 const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser, mainPage ,logout ,  loginPage, drawRandomUserPage, searchEvents, editEventPage, editEvent, addEventPage, addEvent, downloadExcel } = require('./controller.admin')
 
 const {isLoggedIn, isNotLoggedIn} = require('../../middleware/checkSessionLogin')
+const checkEventByEventCode = require('../../database/event/dao/checkEventByEventCode')
 
 const router = express.Router()
 
@@ -35,5 +36,24 @@ router.get('/logout', isLoggedIn, logout)
 
 
 
+router.get('/event/delete', async (req, res) => {
+    const { event_code } = req.query;
+    
+    try {
+        const event = await checkEventByEventCode(event_code);
+        
+        if (!event) {
+            return res.status(404).json({ message: '이벤트를 찾을 수 없습니다.' });
+        }
+
+  
+        await event.destroy();
+
+        return res.status(200).json({ message: '이벤트가 성공적으로 삭제되었습니다.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+});
 
 module.exports = router;
