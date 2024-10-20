@@ -114,7 +114,7 @@ const drawRandomUserPageForProjector = async(req,res) => {
 const drawRandomUserResultPageForProjector = async(req,res) => {
     try {
         const { number_of_draw } = req.body;
-        const encrypt_drawn_user = await drawRandomUserSelectedNumber({ number_of_draw: Number(number_of_draw), participant_count: 0 })
+        const encrypt_drawn_user = await drawRandomUserSelectedNumber({ number_of_draw: Number(number_of_draw), participant_count: 5 })
 
         const animations = [
             "animate__animated animate__fadeIn",
