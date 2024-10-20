@@ -1,19 +1,23 @@
 const checkEventByEventCode = require("../../database/event/dao/checkEventByEventCode");
-const createUser = require("../../database/user/dao/createUser");
-const findUserByStudentCode = require("../../database/user/dao/findUserByStudentCode");
-const increaseParticipantCount = require("../../database/user/dao/increaseParticipantCount");
-const { encrypt } = require("../../utils/crypt");
+const createUser = require("../../database/user/dao/user/createUser");
+const findUserByStudentCode = require("../../database/user/dao/user/findUserByStudentCode");
+const increaseParticipantCount = require("../../database/user/dao/user/increaseParticipantCount");
+const deleteUserInfo = require("../../database/user/dao/user/deleteUserInfo");
+const findUserById = require("../../database/user/dao/user/findUserById");
+
+const getAllEvents = require("../../database/event/dao/getAllEvents");
+const checkEventWithParticipant = require("../../database/event/dao/checkEventWithParticipant");
+
+const findParticipantStartingWithTalkConcert = require("../../database/participant/dao/findParticipantStartingWithTalkConcert");
+
 const checkAttendanceList = require("./service.user/checkAttendanceList");
 const checkParticipationDuplication = require("./service.user/checkParticipationDuplication");
 const saveParticipationRecord = require("./service.user/saveParticipationRecord");
+
 const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByUserId')
 const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
-const deleteUserInfo = require("../../database/user/dao/deleteUserInfo");
-const findUserById = require("../../database/user/dao/findUserById");
+
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
-const getAllEvents = require("../../database/event/dao/getAllEvents");
-const checkEventWithParticipant = require("../../database/event/dao/checkEventWithParticipant");
-const findParticipantStartingWithTalkConcert = require("../../database/participant/dao/findParticipantStartingWithTalkConcert");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;

@@ -32,6 +32,7 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 db.User = require('./user/user')(sequelize, Sequelize);
 db.Event = require('./event/event')(sequelize, Sequelize);
 db.Participant = require('./participant/participant')(sequelize, Sequelize);
+db.DrawnUser = require('./user/drawnUser')(sequelize, Sequelize);
 
 // jwt
 db.RefreshToken = require('./jwt/refreshToken')(sequelize, Sequelize);

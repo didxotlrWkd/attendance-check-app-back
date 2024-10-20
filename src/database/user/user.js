@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     user.associate = (models) => {
         user.hasMany(models.Participant, { foreignKey: 'user_id' })
         user.hasMany(models.RefreshToken,{ foreignKey: 'user_id'})
+        user.hasMany(models.DrawnUser,{ foreignKey: 'user_id'})
     }
     return user;
 }

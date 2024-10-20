@@ -1,6 +1,4 @@
-const {User} = require('../../../database')
-const participant = require('../../participant/participant')
-
+const {User} = require('../../../../database')
 module.exports = async(id) => {
     try{
         const user = await User.findOne({

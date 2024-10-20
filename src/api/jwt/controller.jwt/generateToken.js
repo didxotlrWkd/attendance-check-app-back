@@ -1,8 +1,7 @@
 const generateToken = require('../service.jwt/generateToken')
-const findUserByidentifier = require('../service.jwt/findUserByidentifier');
 const saveRefreshToken = require('../service.jwt/saveRefreshToken');
-const findUserByStudentCode = require('../../../database/user/dao/findUserByStudentCode');
-const findUserById = require('../../../database/user/dao/findUserById');
+
+const findUserById = require('../../../database/user/dao/user/findUserById');
 
 module.exports = async (req, res, next) => {
   try {

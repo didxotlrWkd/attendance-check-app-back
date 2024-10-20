@@ -3,8 +3,8 @@ const checkRefreshToken = require('../service.jwt/checkRefreshToken')
 const generateToken = require('../service.jwt/generateToken')
 const checkRefreshBlackList = require('../service.jwt/checkRefreshBlackList')
 const jwt = require('jsonwebtoken');
-const findUserByidentifier = require("../service.jwt/findUserByidentifier");
-const findUserById = require('../../../database/user/dao/findUserById')
+
+const findUserById = require('../../../database/user/dao/user/findUserById')
 
 
 // access token을 refresh token 기반으로 재발급
