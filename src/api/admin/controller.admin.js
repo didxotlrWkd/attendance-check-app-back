@@ -102,6 +102,44 @@ const drawRandomUserPage = async (req, res) => {
     }
 }
 
+const drawRandomUserPageForProjector = async(req,res) => {
+    try{
+        return res.render('drawPageForProject')
+
+    }catch(err){
+        res.status(500).json({error : err.message})
+    }
+}
+
+const drawRandomUserResultPageForProjector = async(req,res) => {
+    try {
+        const { number_of_draw } = req.body;
+        const encrypt_drawn_user = await drawRandomUserSelectedNumber({ number_of_draw: Number(number_of_draw), participant_count: 0 })
+
+        const animations = [
+            "animate__animated animate__fadeIn",
+            "animate__animated animate__bounce",
+            "animate__animated animate__zoomIn",
+            "animate__animated animate__lightSpeedInLeft",
+            "animate__animated animate__backInDown",
+            "animate__animated animate__backInUp",
+            "animate__animated animate__bounceInDown",
+            "animate__animated animate__fadeInDown"
+        ];
+
+        const randomIndex = Math.floor(Math.random() * animations.length);
+        const selectedAnimation = animations[randomIndex];
+        
+        const decrypt_drawn_user = await decryptUserInfo(encrypt_drawn_user)
+        return res.render('drawPageForProject', {
+            users : decrypt_drawn_user,
+            animation_class :selectedAnimation 
+        })
+    }catch(err){
+        res.status(500).json({error : err.message})
+    }
+}
+
 const searchEvents = async(req,res) => {
     try{
         const events = await getAllEvents()
@@ -220,4 +258,7 @@ module.exports = {
     editEvent,
     downloadExcel,
     logout,
+    drawRandomUserPageForProjector,
+    drawRandomUserResultPageForProjector
+
 }

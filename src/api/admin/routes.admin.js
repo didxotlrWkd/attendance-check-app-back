@@ -1,5 +1,5 @@
 const express = require('express')
-const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser, mainPage ,logout ,  loginPage, drawRandomUserPage, searchEvents, editEventPage, editEvent, addEventPage, addEvent, downloadExcel } = require('./controller.admin')
+const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser, mainPage ,logout ,  loginPage, drawRandomUserPage, searchEvents, editEventPage, editEvent, addEventPage, addEvent, downloadExcel, drawRandomUserPageForProjector, drawRandomUserResultPageForProjector } = require('./controller.admin')
 
 const {isLoggedIn, isNotLoggedIn} = require('../../middleware/checkSessionLogin')
 const checkEventByEventCode = require('../../database/event/dao/checkEventByEventCode')
@@ -17,6 +17,10 @@ router.get('/userinfo' , isLoggedIn, checkAllUserInfo)
 router.post('/draw/random-user',isLoggedIn, drawRandomParticipant)
 
 router.get('/draw/random-user' ,isLoggedIn, drawRandomUserPage)
+
+router.get('/draw/random-user/project', isLoggedIn , drawRandomUserPageForProjector)
+
+router.post('/draw/random-user/project' , isLoggedIn , drawRandomUserResultPageForProjector)
 
 router.post('/search/specific-user',isLoggedIn, searchSpecificUser)
 
