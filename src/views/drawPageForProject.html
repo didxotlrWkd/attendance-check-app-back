@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>경품 추첨</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        html, body {
-            height: 100%; /* HTML과 body의 높이를 100%로 설정 */
-            margin: 0; /* 기본 여백 제거 */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
         }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
@@ -17,40 +21,79 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .content {
             text-align: center;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 60px; /* 패딩을 늘려서 크기 증가 */
-            width: 120%; /* 너비를 더 넓게 설정 */
-            max-width: 800px; /* 최대 너비를 늘림 */
-            margin: auto; /* 중앙 정렬 */
-            flex: 1; /* flex를 사용하여 공간을 가득 채우도록 설정 */
+            position: relative;
+            /* 자식 요소에 대한 포지션을 설정 */
+            overflow: hidden;
+            /* 자식 요소가 넘치지 않도록 설정 */
         }
+
+        body::before {
+            content: "";
+            /* 가상 요소 생성 */
+            position: absolute;
+            /* 절대 위치 설정 */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://univting-s3.s3.ap-northeast-2.amazonaws.com/Posts/KakaoTalk_20241023_135232403.png');
+            /* 배경 사진 URL */
+            background-size: contain;
+            /* 배경 사진이 화면을 모두 덮도록 설정 */
+            background-position: center;
+            /* 배경 이미지를 중앙으로 설정 */
+            background-repeat: no-repeat; /* 배경 이미지 반복 방지 */
+            opacity: 0.2;
+            /* 투명도 설정 (0.0 ~ 1.0) */
+            z-index: -1;
+            /* 다른 요소들 뒤에 위치하도록 설정 */
+        }
+
+
         h1 {
-            color: #162c44;
-            font-size: 3rem; /* 제목 크기 증가 */
+            color: #000000;
+            font-size: 12rem;
+            margin: 0;
         }
+
+        h2 {
+            color: #000000;
+            font-size: 6rem;
+            font-weight: 100;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        h3 {
+            color: #000000;
+            font-size: 6rem;
+            margin: 10px 0;
+        }
+
         table {
             width: 100%;
             margin-top: 10px;
             border-collapse: collapse;
-            font-size: 3rem; /* 테이블 폰트 크기 증가 */
+            font-size: 3rem;
         }
-        th, td {
+
+        th,
+        td {
             border: 2px solid #dee2e6;
-            padding: 15px; /* 패딩 증가 */
+            padding: 15px;
             text-align: center;
         }
+
         th {
             background-color: #0bc539;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
         button {
             margin-top: 10px;
             padding: 10px 15px;
@@ -60,43 +103,40 @@
             color: white;
             cursor: pointer;
             transition: background-color 0.3s;
-            font-size: 1.8rem; /* 버튼 폰트 크기 증가 */
+            font-size: 1.8rem;
         }
+
         button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <div class="content">
+        {% if users %}
+        {% for user in users %}
+        <td>
+            <div style="text-align: center;" class="{{animation_class}}">
+                <h1 style="font-weight: bold;">{{ user.name }}</h1>
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <h2 style="font-weight: bold; margin: 0; padding-right: 40px; line-height: 1.2;">{{
+                        user.student_code }}</h2>
+                    <h2 style="font-weight: bold; margin: 0; line-height: 1.2;">{{ user.major }}</h2>
+                </div>
+            </div>
+        </td>
+        {% endfor %}
+        {% else %}
         <h1>경품 추첨</h1>
+        <h2>2024 SW융합대학 학술제</h2>
+        {% endif %}
+        {% if message %}
+        <h3 style="margin: 10px 0; padding: 0;">{{ message}}</h3>
+        {% endif %}
         <form action="/admin/draw/random-user/project" method="POST" onsubmit="setDefaultValue()">
             <button type="submit">추첨하기</button>
         </form>
-        
-        {% if users %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>학번</th>
-                        <th>학과</th>
-                        <th>이름</th>
-                    </tr>
-                </thead>
-                <tbody id="user-table" class="{{animation_class}}">
-                    {% for user in users %}
-                        <tr>
-                            <td style="font-weight: bold;">{{ user.student_code }}</td>
-                            <td style="font-weight: bold;">{{ user.major }}</td>
-                            <td style="font-weight: bold;">{{ user.name }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-        {% if message %}
-        <h2 style="margin: 10px 0; padding: 0;">{{ message}}</h2>
-        {% endif %}
     </div>
 </body>
 <script>
@@ -109,4 +149,5 @@
         document.forms[0].appendChild(input);
     }
 </script>
+
 </html>
