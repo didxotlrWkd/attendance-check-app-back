@@ -18,6 +18,7 @@ const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByU
 const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
 
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
+const { encrypt } = require("../../utils/crypt");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;
@@ -78,6 +79,7 @@ const login = async (req, res, next) => {
         req.user_id = user.id
         return next()
     } catch (err) {
+        console.error(err)
         return res.status(500).json({ error: err.message })
     }
 }
