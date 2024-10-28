@@ -16,7 +16,8 @@ const app = express();
 
 app.set('port', process.env.PORT || 9999);
 
-app.use(express.static(path.join(__dirname , 'public')))
+// app.use(express.static(path.join(__dirname , 'public')))
+app.use('/fonts', express.static(path.join(__dirname, 'fonts')));
 
 app.set('view engine', 'html');
 

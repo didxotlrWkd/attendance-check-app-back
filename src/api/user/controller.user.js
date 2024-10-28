@@ -18,6 +18,7 @@ const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByU
 const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
 
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
+const identifyUser = require("../../database/user/dao/user/identifyUser");
 const { encrypt } = require("../../utils/crypt");
 
 const checkAttendance = async (req, res) => {
@@ -50,7 +51,7 @@ const saveParticipation = async (req, res) => {
         }
 
         const isTalkConcert = event_code.startsWith("SCHUSWCU1stAF_GraduatedTalkConcert");
-        
+
         const results = isTalkConcert ? await findParticipantStartingWithTalkConcert(event_code, user_id) : null;
 
         if (!results) {
@@ -58,7 +59,7 @@ const saveParticipation = async (req, res) => {
         }
 
         await saveParticipationRecord(user_id, event_code);
-        return res.status(200).json({message: "saved successfully" })
+        return res.status(200).json({ message: "saved successfully" })
     } catch (err) {
         console.error(err)
         return res.status(500).json({ error: err.message })
@@ -70,10 +71,15 @@ const login = async (req, res, next) => {
     try {
         const crypt_name = encrypt(name)
         const crypt_student_code = encrypt(student_code)
-        const is_user = await findUserByStudentCode({ student_code: crypt_student_code })
-        if (is_user) {
-            req.user_id = is_user.id
-            return next()
+        const is_user_student_code = await findUserByStudentCode({ student_code: crypt_student_code })
+        if (is_user_student_code) {
+            const is_user = await identifyUser({ student_code: crypt_student_code, name: crypt_name, major })
+            if (is_user) {
+                req.user_id = is_user.id
+                return next()
+            } else { 
+                return res.status(401).json({message : "저장된 회원정보와 일치하지 않습니다."})
+            }
         }
         const user = await createUser({ major, name: crypt_name, student_code: crypt_student_code })
         req.user_id = user.id

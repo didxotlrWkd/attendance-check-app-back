@@ -8,6 +8,21 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        @font-face {
+            font-family: 'GmarketSansBold';
+            src: url('/fonts/GmarketSansTTFBold.ttf') format('truetype'); /* 굵은 폰트 */
+        }
+
+        @font-face {
+            font-family: 'GmarketSansLight';
+            src: url('/fonts/GmarketSansTTFLight.ttf') format('truetype'); /* 얇은 폰트 */
+        }
+
+        @font-face {
+            font-family: 'GmarketSansMedium';
+            src: url('/fonts/GmarketSansTTFMedium.ttf') format('truetype'); /* 중간 두께 폰트 */
+        }
+
         html,
         body {
             height: 100%;
@@ -15,7 +30,7 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'GmarketSansBold', Arial, sans-serif; /* 기본 폰트 설정 */
             background-color: #f8f9fa;
             color: #343a40;
             display: flex;
@@ -23,33 +38,23 @@
             justify-content: center;
             text-align: center;
             position: relative;
-            /* 자식 요소에 대한 포지션을 설정 */
             overflow: hidden;
-            /* 자식 요소가 넘치지 않도록 설정 */
         }
 
         body::before {
             content: "";
-            /* 가상 요소 생성 */
             position: absolute;
-            /* 절대 위치 설정 */
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background-image: url('https://univting-s3.s3.ap-northeast-2.amazonaws.com/Posts/KakaoTalk_20241023_135232403.png');
-            /* 배경 사진 URL */
             background-size: contain;
-            /* 배경 사진이 화면을 모두 덮도록 설정 */
             background-position: center;
-            /* 배경 이미지를 중앙으로 설정 */
-            background-repeat: no-repeat; /* 배경 이미지 반복 방지 */
+            background-repeat: no-repeat;
             opacity: 0.2;
-            /* 투명도 설정 (0.0 ~ 1.0) */
             z-index: -1;
-            /* 다른 요소들 뒤에 위치하도록 설정 */
         }
-
 
         h1 {
             color: #000000;
@@ -109,6 +114,14 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .light-font {
+            font-family: 'GmarketSansLight', sans-serif; /* 얇은 폰트 적용 */
+        }
+
+        .medium-font {
+            font-family: 'GmarketSansMedium', sans-serif; /* 중간 두께 폰트 적용 */
+        }
     </style>
 </head>
 
@@ -118,18 +131,17 @@
         {% for user in users %}
         <td>
             <div style="text-align: center;" class="{{animation_class}}">
-                <h1 style="font-weight: bold;">{{ user.name }}</h1>
+                <h1 style="font-weight: bold;" id="user-name-{{ loop.index }}">{{ user.name }}</h1>
                 <div style="display: flex; justify-content: center; align-items: center;">
-                    <h2 style="font-weight: bold; margin: 0; padding-right: 40px; line-height: 1.2;">{{
-                        user.student_code }}</h2>
-                    <h2 style="font-weight: bold; margin: 0; line-height: 1.2;">{{ user.major }}</h2>
+                    <h2 class="medium-font" id="student-code-{{ loop.index }}" style="margin: 0; padding-right: 40px; line-height: 1.2;">{{ user.student_code }}</h2>
+                    <h2 class="medium-font" id="major-{{ loop.index }}" style="margin: 0; line-height: 1.2;">{{ user.major }}</h2>
                 </div>
             </div>
         </td>
         {% endfor %}
         {% else %}
         <h1>경품 추첨</h1>
-        <h2>2024 SW융합대학 학술제</h2>
+        <h2 class="light-font">2024 SW융합대학 학술제</h2> <!-- 얇은 폰트 적용 -->
         {% endif %}
         {% if message %}
         <h3 style="margin: 10px 0; padding: 0;">{{ message}}</h3>
@@ -148,6 +160,24 @@
         input.value = 1;
         document.forms[0].appendChild(input);
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const userEntries = document.querySelectorAll('div[class="{{animation_class}}"]');
+        
+        userEntries.forEach(entry => {
+            const nameElement = entry.querySelector('h1');
+            const studentCodeElement = entry.querySelector('h2[id^="student-code-"]');
+            const majorElement = entry.querySelector('h2[id^="major-"]');
+
+            const majorLength = majorElement.textContent.length;
+
+            if (majorLength > 6) {
+                const newFontSize = Math.max(4, 6 - (majorLength - 6) * 0.5); // 기본 폰트 크기 6rem에서 학과 길이에 따라 줄이기
+                studentCodeElement.style.fontSize = newFontSize + 'rem'; // 학번 폰트 크기 설정
+                majorElement.style.fontSize = newFontSize + 'rem'; // 학과 폰트 크기 설정
+            }
+        });
+    });
 </script>
 
 </html>
