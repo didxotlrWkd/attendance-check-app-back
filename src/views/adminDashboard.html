@@ -6,21 +6,37 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        /* 기본 폰트 */
-        background-color: #f7f7f7;
-        /* 전체 배경색 */
+        display: flex;
+        margin: 0;
+        background-color: #eaeaea;
+        /* 배경색 */
     }
 
     .content {
         padding: 20px;
-        background-color: #fff;
+        flex-grow: 1;
+        background-color: #f0f8ff;
         /* 콘텐츠 배경색 */
-        border-radius: 8px;
-        /* 모서리 둥글게 */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        /* 그림자 효과 */
-        margin: 20px;
-        /* 여백 추가 */
+        min-height: 100vh;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        background-color: #f5f8f9;
+        /* 버튼 색상 */
+        color: #000000;
+        /* 버튼 글자색 */
+    }
+
+    button:hover {
+        opacity: 0.9;
+        /* 마우스 오버 시 투명도 변화 */
     }
 
     h1 {
@@ -70,32 +86,6 @@
         /* 기본 아웃라인 제거 */
     }
 
-    .btn {
-        padding: 12px 20px;
-        /* 버튼 여백 */
-        background-color: #007bff;
-        /* 버튼 배경색 */
-        color: white;
-        /* 버튼 글자색 */
-        border: none;
-        /* 버튼 테두리 제거 */
-        border-radius: 5px;
-        /* 버튼 모서리 둥글게 */
-        cursor: pointer;
-        /* 커서 포인터 */
-        transition: background-color 0.3s, transform 0.2s;
-        /* 배경색 및 크기 전환 효과 */
-        font-size: 16px;
-        /* 버튼 폰트 크기 */
-        margin-top: 10px;
-        /* 버튼 위쪽 여백 */
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-        /* 마우스 오버 시 색상 변화 */
-    }
-
     .table {
         width: 100%;
         /* 테이블 너비 */
@@ -141,43 +131,47 @@
     }
 </style>
 
-<div class="content">
-    <h1>관리자 대시보드</h1>
 
-    <button class="btn" onclick="location.href='/admin/download/student-info'">학생 데이터 다운로드</button>
+<h1>관리자 대시보드</h1>
 
-    <h2>학생 검색</h2>
-    <form action="/admin/search/specific-user" method="POST" class="mb-3">
-        <div class="form-group">
-            <label for="student_code">학번</label>
-            <input type="text" class="form-control" id="student_code" name="student_code" required>
-        </div>
-        <button type="submit" class="btn">학생 확인</button>
-    </form>
+<button class="btn" onclick="location.href='/admin/download/student-info'">학생 데이터 다운로드</button>
 
-    <h2>학생 목록</h2>
-    <button class="btn" id="sortBtn" onclick="sortTable()">참여횟수 정렬하기</button>
-    <table class="table" id="userTable">
-        <thead>
-            <tr>
-                <th>학번</th>
-                <th>학과</th>
-                <th>이름</th>
-                <th>참여횟수</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.student_code }}</td>
-                <td>{{ user.major }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.participant_count }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<h2>학생 검색</h2>
+<form action="/admin/search/specific-user" method="POST" class="mb-3">
+    <div class="form-group">
+        <label for="student_code">학번</label>
+        <input type="text" class="form-control" id="student_code" name="student_code" required>
+    </div>
+    <button type="submit" class="btn">학생 확인</button>
+</form>
+
+<h2>학생 목록</h2>
+<button class="btn" id="sortBtn" onclick="sortTable()">참여횟수 정렬하기</button>
+{% if users %}
+<table class="table" id="userTable">
+    <thead>
+        <tr>
+            <th>학번</th>
+            <th>학과</th>
+            <th>이름</th>
+            <th>참여횟수</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.student_code }}</td>
+            <td>{{ user.major }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.participant_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<h3 style="margin: 10px 0; padding: 0;">{{ message }}</h3>
+{% endif %}
+
 
 <script>
     let sortDirection = 'asc'; // 기본 정렬 방향

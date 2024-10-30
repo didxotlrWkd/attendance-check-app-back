@@ -6,8 +6,10 @@ const modifyEvent = require('../../database/event/dao/modifyEvent');
 const addDrawnUser = require('../../database/user/dao/drawnUser/addDrawnUser');
 const checkDrawnUser = require('../../database/user/dao/drawnUser/checkDrawnUser');
 const checkUserInfoByParticipantCount = require('../../database/user/dao/user/checkUserInfoByParticipantCount');
+const deleteUserInfo = require('../../database/user/dao/user/deleteUserInfo');
 const drawRandomUserParticipant5 = require('../../database/user/dao/user/drawRandomUserParticipant5');
 const drawRandomUserSelectedNumber = require('../../database/user/dao/user/drawRandomUserSelectedNumber');
+const findUserById = require('../../database/user/dao/user/findUserById');
 const findUserByStudentCode = require('../../database/user/dao/user/findUserByStudentCode');
 const { decrypt, encrypt } = require('../../utils/crypt');
 const createExelFile = require('./service.admin/createExelFile');
@@ -25,7 +27,7 @@ const loginPage = async (req, res, next) => {
 
 const mainPage = async (req, res) => {
     if (req.session.isLoggedIn) {
-        res.render('adminMainPage'); // 로그인 상태일 경우 관리자 페이지 렌더링
+        return res.redirect('/admin/userinfo'); // 로그인 상태일 경우 관리자 페이지 렌더링
     } else {
         res.redirect('/admin/login'); // 로그인 상태가 아닐 경우 로그인 페이지로 리디렉션
     }
@@ -39,7 +41,7 @@ const adminLogin = async (req, res) => {
             res.redirect('/admin/login');
         } else {
             req.session.isLoggedIn = true;
-            return res.render('adminMainPage')
+            return res.redirect('/admin/userinfo');
         }
     } catch (err) {
         res.redirect('/admin/login')
@@ -61,6 +63,53 @@ const checkAllUserInfo = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+const editUser = async (req, res) => {
+    try {
+        const { user_id, student_code, major, name } = req.body
+        const encrypt_student_code = encrypt(student_code)
+        const encrypt_name = encrypt(name)
+
+        const user = await findUserById(user_id)
+        if (!user) {
+            throw new Error("존재하지 않는 아이디입니다.")
+        }
+        const is_student_code = await findUserByStudentCode({ student_code : encrypt_student_code })
+        if (is_student_code && encrypt_student_code !== user.student_code) {
+            throw new Error("중복되는 학번입니다.")
+        }
+
+        await user.update({ student_code: encrypt_student_code, major, name: encrypt_name })
+
+        const decrypt_user_info = await decryptUserInfo([user])
+
+        return res.render('adminDashboard', {
+            users: decrypt_user_info
+        })
+
+    } catch (err) {
+        console.error(err)
+        return res.render('adminDashboard', {
+            message: err.message
+        })
+    }
+}
+
+const deleteUserByAdmin = async(req,res) => {
+    try {
+        const { user_id } = req.body
+        console.log(user_id)
+        await deleteUserInfo(user_id)
+
+        return res.render('adminDashboard', {
+            message : "학생정보가 삭제되었습니다."
+        })
+    } catch (err) {
+        return res.render('adminDashboard', {
+            message: err.message
+        })
+    }
+}
 
 const drawRandomParticipant = async (req, res) => {
     const { number_of_draw, participant_count } = req.body;
@@ -93,7 +142,9 @@ const searchSpecificUser = async (req, res) => {
             users: decrypt_user_info
         })
     } catch (err) {
-        return res.render('adminDashboard')
+        return res.render('adminDashboard', {
+            message : err.message
+        })
     }
 }
 
@@ -128,27 +179,27 @@ const drawRandomUserResultPageForProjector = async (req, res) => {
     try {
         const drawn_ids = await checkDrawnUser()
 
-        const encrypt_drawn_user = await drawRandomUserParticipant5({ drawn_ids})
+        const encrypt_drawn_user = await drawRandomUserParticipant5({ drawn_ids })
 
         if (encrypt_drawn_user) {
             await addDrawnUser(encrypt_drawn_user.id);
             const randomIndex = Math.floor(Math.random() * animations.length);
             const selectedAnimation = animations[randomIndex];
-    
+
             const decrypt_drawn_user = await decryptUserInfo([encrypt_drawn_user])
-    
+
             return res.render('drawPageForProject', {
                 users: decrypt_drawn_user,
                 animation_class: selectedAnimation
             })
         }
         return res.render('drawPageForProject', {
-            users : null,
-            animation_class : "table",
+            users: null,
+            animation_class: "table",
             message: "추첨 가능 인원이 없습니다."
         })
 
-        
+
     } catch (err) {
         console.error(err)
         res.status(500).json({ error: err.message })
@@ -274,6 +325,8 @@ module.exports = {
     downloadExcel,
     logout,
     drawRandomUserPageForProjector,
-    drawRandomUserResultPageForProjector
+    drawRandomUserResultPageForProjector,
+    editUser,
+    deleteUserByAdmin,
 
 }

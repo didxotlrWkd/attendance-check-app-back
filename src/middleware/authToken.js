@@ -1,7 +1,8 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
+const findUserById = require('../database/user/dao/user/findUserById');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
     try {
         // 요청 헤더에 저장된 토큰(req.headers.authorization)과 비밀키를 사용하여 토큰을 req.decoded에 반환
         const token = jwt.verify(req.headers.authorization, process.env.ACCESS_TOKEN_SECRET);
@@ -9,6 +10,14 @@ module.exports = (req, res, next) => {
             return res.status(401).json({
                 code: 401,
                 message: '해당 토큰은 올바르지 않은 토큰입니다.'
+            });
+        }
+
+        const user = await findUserById(token.user_id)
+        if(!user){
+            return res.status(409).json({
+                code: 409,
+                message: '학생이 삭제되었습니다.'
             });
         }
         req.decoded = token
