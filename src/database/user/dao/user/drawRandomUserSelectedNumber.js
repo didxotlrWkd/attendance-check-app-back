@@ -1,3 +1,4 @@
+
 const { User , sequelize, Sequelize} = require('../../../../database')
 
 module.exports = async ({ participant_count, number_of_draw }) => {
