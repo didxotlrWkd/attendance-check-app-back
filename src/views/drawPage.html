@@ -5,79 +5,184 @@
 
 {% block content %}
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        margin: 0;
+        background-color: #eaeaea;
+    }
+
     .content {
         padding: 20px;
-        background-color: #fff;
-        /* 콘텐츠 배경색 */
-        border-radius: 5px;
-        /* 모서리 둥글게 */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        /* 그림자 효과 */
+        flex-grow: 1;
+        background-color: #f0f8ff;
+        min-height: 100vh;
     }
 
     h1 {
         color: #333;
-        /* 제목 색상 */
+        font-size: 24px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
     }
 
     h2 {
-        margin-top: 20px;
-        /* 제목 위쪽 여백 */
+        margin-top: 30px;
         color: #444;
-        /* 서브 제목 색상 */
+        font-size: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    input.form-control {
+    width: 99%; /* 전체 너비 */
+    padding: 0.5rem; /* 내부 여백 */
+    border: 1px solid #ccc; /* 테두리 색상 */
+    border-radius: 0.25rem; /* 모서리 둥글게 */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    transition: border-color 0.2s; /* 테두리 색상이 바뀔 때의 애니메이션 */
+}
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+        font-size: 16px;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
     }
 
     .table {
         width: 100%;
-        /* 테이블 너비 */
         border-collapse: collapse;
-        /* 테이블 경계선 합치기 */
         margin-top: 20px;
-        /* 테이블 위쪽 여백 */
     }
 
     .table th,
     .table td {
-        padding: 10px;
-        /* 셀 여백 */
-        border: 1px solid #ddd;
-        /* 셀 테두리 색상 */
+        padding: 12px;
+        border: 1px solid #24549c;
         text-align: left;
-        /* 텍스트 왼쪽 정렬 */
+        font-size: 16px;
     }
 
     .table th {
-        background-color: #f2f2f2;
-        /* 헤더 배경색 */
-        color: #333;
-        /* 헤더 글자색 */
+        background-color: #24549c;
+        color: white;
     }
 
     .table tbody tr:hover {
         background-color: #f5f5f5;
-        /* 마우스 오버 시 행 색상 변화 */
+    }
+
+    .alert {
+        padding: 15px;
+        margin-top: 20px;
+        background-color: #f44336;
+        color: white;
+        border-radius: 5px;
     }
 
     .btn {
-        padding: 10px 15px;
-        /* 버튼 여백 */
-        background-color: #007bff;
-        /* 버튼 배경색 */
-        color: white;
-        /* 버튼 글자색 */
-        border: none;
-        /* 버튼 테두리 제거 */
-        border-radius: 5px;
-        /* 버튼 모서리 둥글게 */
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
         cursor: pointer;
-        /* 커서 포인터 */
-        transition: background-color 0.3s;
-        /* 배경색 전환 효과 */
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.2s;
+        /* 배경색과 변형 효과 추가 */
+        background-color: #24549c;
+        /* 버튼 기본 색상 */
+        color: white;
+        /* 글자색 흰색 */
+        font-size: 16px;
+        /* 글자 크기 */
+    }
+    html
+    
+   body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        margin: 0;
+        background-color: #eaeaea;
     }
 
-    .btn:hover {
-        background-color: #0056b3;
-        /* 마우스 오버 시 색상 변화 */
+    h1 {
+        text-align: center;
+        /* 제목 중앙 정렬 */
+        color: #343a40;
+        /* 제목 색상 */
+    }
+
+    form {
+        background-color: #ffffff;
+        /* 폼 배경 색상 */
+        padding: 20px;
+        /* 내부 여백 */
+        border-radius: 5px;
+        /* 둥근 모서리 */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* 그림자 효과 */
+        max-width: 400px;
+        /* 최대 너비 설정 */
+        margin: 0 auto;
+        /* 중앙 정렬 */
+    }
+
+    label {
+        display: block;
+        /* 레이블을 블록 요소로 설정 */
+        margin-bottom: 0.5rem;
+        /* 레이블과 입력 필드 간의 간격 */
+        font-weight: bold;
+        /* 굵은 글꼴 */
+    }
+
+    input[type="number"] {
+        width: 95%;
+        /* 전체 너비 */
+        padding: 0.5rem;
+        /* 내부 여백 */
+        border: 1px solid #ced4da;
+        /* 테두리 색상 */
+        border-radius: 0.25rem;
+        /* 모서리 둥글게 */
+        margin-bottom: 1rem;
+        /* 입력 필드 간의 간격 */
+        transition: border-color 0.2s;
+        /* 테두리 색상이 바뀔 때의 애니메이션 */
+    }
+
+    input[type="number"]:focus {
+        border-color: #66afe9;
+        /* 포커스 시 테두리 색상 */
+        outline: none;
+        /* 기본 아웃라인 제거 */
+        box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+        /* 포커스 시 그림자 효과 */
+    }
+
+    #button2 {
+        background-color: #24549c;
+        /* 원하는 배경색 */
+        color: white;
+        /* 글자색 */
+        border: none;
+        /* 테두리 없애기 */
+        padding: 10px;
+        /* 여백 */
+        border-radius: 5px;
+        /* 모서리 둥글게 */
+        cursor: pointer;
+        /* 커서 모양 */
     }
 </style>
 
@@ -85,15 +190,15 @@
 <form action="/admin/draw/random-user" method="POST">
     <label for="number_of_draw">추첨할 학생 수:</label>
     <input type="number" id="number_of_draw" name="number_of_draw" min="1" required>
-    <br>
+  
     <label for="participant_count">참여 횟수:</label>
     <input type="number" id="participant_count" name="participant_count" min="0" required>
-    <br>
+
     <button type="submit">추첨하기</button>
 </form>
 
 {% if users %}
-<h2>학생 목록</h2>
+<h2 id="table2">학생 목록</h2>
 <table class="table">
     <thead>
         <tr>

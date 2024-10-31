@@ -1,0 +1,94 @@
+{% extends "adminMainPage.html" %}
+
+{% block title %}행사 수정{% endblock %}
+
+{% block content %}
+<style>
+    .content {
+        padding: 20px;
+        background-color: #fff; /* 콘텐츠 배경색 */
+        border-radius: 5px; /* 모서리 둥글게 */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    }
+
+    h1 {
+        color: #333; /* 제목 색상 */
+    }
+
+    h2 {
+        margin-top: 20px; /* 제목 위쪽 여백 */
+        color: #444; /* 서브 제목 색상 */
+    }
+
+    .form-group {
+        margin-bottom: 15px; /* 폼 그룹 간격 */
+    }
+
+    .form-control {
+        width: 100%; /* 입력 필드 너비 */
+        padding: 10px; /* 입력 필드 여백 */
+        border: 1px solid #ccc; /* 테두리 색상 */
+        border-radius: 5px; /* 테두리 둥글게 */
+        transition: border-color 0.3s; /* 테두리 색상 전환 효과 */
+    }
+
+    .form-control:focus {
+        border-color: #007bff; /* 포커스 시 테두리 색상 */
+        outline: none; /* 기본 아웃라인 제거 */
+    }
+
+    .btn {
+        padding: 10px 15px; /* 버튼 여백 */
+        background-color: #007bff; /* 버튼 배경색 */
+        color: white; /* 버튼 글자색 */
+        border: none; /* 버튼 테두리 제거 */
+        border-radius: 5px; /* 버튼 모서리 둥글게 */
+        cursor: pointer; /* 커서 포인터 */
+        transition: background-color 0.3s; /* 배경색 전환 효과 */
+        margin-top: 10px; /* 버튼 위쪽 여백 */
+    }
+
+    .btn:hover {
+        background-color: #0056b3; /* 마우스 오버 시 색상 변화 */
+    }
+
+    .table {
+        width: 100%; /* 테이블 너비 */
+        border-collapse: collapse; /* 테이블 경계선 합치기 */
+        margin-top: 20px; /* 테이블 위쪽 여백 */
+    }
+
+    .table th, .table td {
+        padding: 10px; /* 셀 여백 */
+        border: 1px solid #ddd; /* 셀 테두리 색상 */
+        text-align: left; /* 텍스트 왼쪽 정렬 */
+    }
+
+    .table th {
+        background-color: #f2f2f2; /* 헤더 배경색 */
+        color: #333; /* 헤더 글자색 */
+    }
+</style>
+
+<div class="content">
+    <h1>이벤트 수정</h1>
+    <form action="/admin/user/edit" method="POST">
+        <div class="form-group">
+            <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user[0].id }}" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="student_code">학번</label>
+            <input type="text" class="form-control" id="student_code" name="student_code" value="{{ user[0].student_code }}" required>
+        </div>
+        <div class="form-group">
+            <label for="major">학과</label>
+            <input type="text" class="form-control" id="major" name="major" value="{{ user[0].major }}"  required>
+        </div>
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ user[0].name }}"  required>
+        </div>
+        <button type="submit" class="btn">수정 완료</button>
+    </form>
+</div>
+{% endblock %}

@@ -95,6 +95,22 @@ const editUser = async (req, res) => {
     }
 }
 
+const editUserPage = async(req,res) => {
+    try{
+        const {user_id} = req.body
+        const user = await findUserById(user_id)
+
+        const decrypt_user_info = await decryptUserInfo([user])
+
+        return res.render('userEditPage' , {
+            user : decrypt_user_info
+        })
+    }catch(err) {
+        console.error(err)
+        return res.redirect('adminDashboard')
+    }
+}
+
 const deleteUserByAdmin = async(req,res) => {
     try {
         const { user_id } = req.body
@@ -328,5 +344,6 @@ module.exports = {
     drawRandomUserResultPageForProjector,
     editUser,
     deleteUserByAdmin,
+    editUserPage
 
 }
