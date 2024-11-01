@@ -12,4 +12,7 @@ config/
 *.json
 *.yaml
 key/
+
 app.js
+
+.log
