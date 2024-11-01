@@ -5,7 +5,6 @@ const increaseParticipantCount = require("../../database/user/dao/user/increaseP
 const deleteUserInfo = require("../../database/user/dao/user/deleteUserInfo");
 const findUserById = require("../../database/user/dao/user/findUserById");
 
-const getAllEvents = require("../../database/event/dao/getAllEvents");
 const checkEventWithParticipant = require("../../database/event/dao/checkEventWithParticipant");
 
 const findParticipantStartingWithTalkConcert = require("../../database/participant/dao/findParticipantStartingWithTalkConcert");
@@ -66,7 +65,8 @@ const checkAttendance = async (req, res) => {
 //     }
 // }
 
-const logger = require('../../middleware/logger')
+const logger = require('../../middleware/logger');
+const { hashPassword , verifyPassword } = require("../../middleware/password");
 
 const saveParticipation = async (req, res) => {
     const { user_id } = req.decoded;
@@ -121,23 +121,33 @@ const saveParticipation = async (req, res) => {
 }
 
 const login = async (req, res, next) => {
-    const { major, name, student_code } = req.body
+    const { major, name, student_code, password } = req.body
     try {
         const crypt_name = encrypt(name)
         const crypt_student_code = encrypt(student_code)
+    
         const is_user_student_code = await findUserByStudentCode({ student_code: crypt_student_code })
+
         if (is_user_student_code) {
+
             const is_user = await identifyUser({ student_code: crypt_student_code, name: crypt_name, major })
+
             if (is_user) {
-                req.user_id = is_user.id
-                return next()
-            } else { 
-                return res.status(401).json({message : "저장된 회원정보와 일치하지 않습니다."})
+                const hashedPassword = is_user.password;
+                const isPasswordValid = await verifyPassword(password, hashedPassword);
+                if (isPasswordValid) {
+                    req.user_id = is_user.id;
+                    return next();
+                } else {
+                    return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+                }
+            } else {
+                return res.status(401).json({ message: "저장된 회원정보와 일치하지 않습니다." })
             }
         }
-        const user = await createUser({ major, name: crypt_name, student_code: crypt_student_code })
-        req.user_id = user.id
-        return next()
+        const newUser = await createUser({ major, name: crypt_name, student_code: crypt_student_code, password: await hashPassword(password) });
+        req.user_id = newUser.id;
+        return next();
     } catch (err) {
         console.error(err)
         return res.status(500).json({ error: err.message })

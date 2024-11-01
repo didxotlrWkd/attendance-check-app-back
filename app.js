@@ -69,18 +69,18 @@ app.use((err, req, res, next) => {
 });
 
 
-// const server = app.listen(app.get('port'), () => {
-//   console.log(app.get('port'), '번 포트에서 대기중');
-// });
-
-
-const options = {
-  key:  fs.readFileSync(process.env.univPrivateKey),
-  cert: fs.readFileSync(process.env.univPublicKey),
-  ca:   fs.readFileSync(process.env.univCAkey),
-}
-const server = https.createServer(options, app);
-
-server.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기중');
 });
+
+
+// const options = {
+//   key:  fs.readFileSync(process.env.univPrivateKey),
+//   cert: fs.readFileSync(process.env.univPublicKey),
+//   ca:   fs.readFileSync(process.env.univCAkey),
+// }
+// const server = https.createServer(options, app);
+
+// server.listen(app.get('port'), () => {
+//   console.log(app.get('port'), '번 포트에서 대기중');
+// });

@@ -40,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         user.hasMany(models.Participant, { foreignKey: 'user_id' })
         user.hasMany(models.RefreshToken,{ foreignKey: 'user_id'})
         user.hasMany(models.DrawnUser,{ foreignKey: 'user_id'})
+        user.hasMany(models.AccessToken,{ foreignKey: 'user_id'})
     }
     return user;
 }

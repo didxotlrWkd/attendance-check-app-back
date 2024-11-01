@@ -2,10 +2,12 @@ const generateToken = require('../service.jwt/generateToken')
 const saveRefreshToken = require('../service.jwt/saveRefreshToken');
 
 const findUserById = require('../../../database/user/dao/user/findUserById');
+const saveAccessToken = require('../service.jwt/saveAccessToken');
 
 module.exports = async (req, res, next) => {
   try {
     const user_id = req.user_id || req.body.user_id
+    console.log(user_id)
 
     const is_user = await findUserById(user_id)
     if (!is_user) {
@@ -15,7 +17,8 @@ module.exports = async (req, res, next) => {
     let access_token = generateToken.access(user_id);
     let refresh_token = generateToken.refresh(user_id);
     // refreshToken 저장
-    await saveRefreshToken(refresh_token, user_id)
+    await saveAccessToken({access_token , user_id})
+    await saveRefreshToken({refresh_token, user_id})
     //response
     return res.status(200).json({
       code: 200,
@@ -23,7 +26,7 @@ module.exports = async (req, res, next) => {
       token: { access_token, refresh_token }
     });
   } catch (error) {
-    console.error(error)
+    console.error(error.message)
     // 유효시간이 초과된 경우
     if (error.name === 'TokenExpiredError') {
       return res.status(419).json({
