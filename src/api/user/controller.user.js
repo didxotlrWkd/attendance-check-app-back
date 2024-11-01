@@ -135,17 +135,22 @@ const login = async (req, res, next) => {
 
             const is_user = await identifyUser({ student_code: crypt_student_code, name: crypt_name, major })
 
-            if (is_user) {
-                const hashedPassword = is_user.password;
-                const isPasswordValid = await verifyPassword(password, hashedPassword);
-                if (isPasswordValid) {
-                    req.user_id = is_user.id;
-                    return next();
+            if (is_user_student_code) {
+
+                const is_user = await identifyUser({ student_code: crypt_student_code, name: crypt_name, major })
+    
+                if (is_user) {
+                    const hashedPassword = is_user.password;
+                    const isPasswordValid = await verifyPassword(password, hashedPassword);
+                    if (isPasswordValid) {
+                        req.user_id = is_user.id;
+                        return next();
+                    } else {
+                        return res.status(405).json({ message: "비밀번호가 일치하지 않습니다." });
+                    }
                 } else {
-                    return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+                    return res.status(406).json({ message: "저장된 회원정보와 일치하지 않습니다." })
                 }
-            } else {
-                return res.status(401).json({ message: "저장된 회원정보와 일치하지 않습니다." })
             }
         }
         const newUser = await createUser({ major, name: crypt_name, student_code: crypt_student_code, password: await hashPassword(password) });
