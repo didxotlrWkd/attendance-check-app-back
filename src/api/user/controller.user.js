@@ -16,6 +16,10 @@ const saveParticipationRecord = require("./service.user/saveParticipationRecord"
 const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByUserId')
 const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
 
+const logger = require('../../middleware/logger');
+const { hashPassword , verifyPassword } = require("../../middleware/password");
+
+
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
 const identifyUser = require("../../database/user/dao/user/identifyUser");
 const { encrypt } = require("../../utils/crypt");
@@ -33,92 +37,91 @@ const checkAttendance = async (req, res) => {
     }
 }
 
+const saveParticipation = async (req, res) => {
+    const { user_id } = req.decoded;
+
+    const { event_code } = req.body;
+    try {
+
+        const is_event = await checkEventByEventCode(event_code)
+        if (!is_event) {
+            return res.status(402).json({ code: 402, error: "존재하지 않는 이벤트 코드입니다." })
+        }
+
+        const is_duplication = await checkParticipationDuplication(user_id, event_code);
+        if (is_duplication) {
+            return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." })
+        }
+
+        // const isTalkConcert = event_code.startsWith("SCHUSWCU1stAF_GraduatedTalkConcert");
+
+        // const results = isTalkConcert ? await findParticipantStartingWithTalkConcert(event_code, user_id) : null;
+
+        // if (!results) {
+        //     await increaseParticipantCount(user_id);
+        // }
+
+        await increaseParticipantCount(user_id);
+        await saveParticipationRecord(user_id, event_code);
+        return res.status(200).json({ message: "saved successfully" })
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json({ error: err.message })
+    }
+}
+
+
 // const saveParticipation = async (req, res) => {
 //     const { user_id } = req.decoded;
-
 //     const { event_code } = req.body;
-//     try {
 
-//         const is_event = await checkEventByEventCode(event_code)
+//     try {
+//         const startCheckEvent = Date.now();
+//         const is_event = await checkEventByEventCode(event_code);
+//         const durationCheckEvent = Date.now() - startCheckEvent;
+//         logger.info(`checkEventByEventCode duration: ${durationCheckEvent}ms`);
+
 //         if (!is_event) {
-//             return res.status(402).json({ code: 402, error: "존재하지 않는 이벤트 코드입니다." })
+//             return res.status(402).json({ code: 402, error: "존재하지 않는 이벤트 코드입니다." });
 //         }
 
+//         const startCheckDuplication = Date.now();
 //         const is_duplication = await checkParticipationDuplication(user_id, event_code);
+//         const durationCheckDuplication = Date.now() - startCheckDuplication;
+//         logger.info(`checkParticipationDuplication duration: ${durationCheckDuplication}ms`);
+
 //         if (is_duplication) {
-//             return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." })
+//             return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." });
 //         }
 
 //         const isTalkConcert = event_code.startsWith("SCHUSWCU1stAF_GraduatedTalkConcert");
 
-//         const results = isTalkConcert ? await findParticipantStartingWithTalkConcert(event_code, user_id) : null;
-
-//         if (!results) {
-//             await increaseParticipantCount(user_id);
+//         let results = null;
+//         if (isTalkConcert) {
+//             const startFindParticipant = Date.now();
+//             results = await findParticipantStartingWithTalkConcert(event_code, user_id);
+//             const durationFindParticipant = Date.now() - startFindParticipant;
+//             logger.info(`findParticipantStartingWithTalkConcert duration: ${durationFindParticipant}ms`);
 //         }
 
+//         if (!results) {
+//             const startIncreaseCount = Date.now();
+//             await increaseParticipantCount(user_id);
+//             const durationIncreaseCount = Date.now() - startIncreaseCount;
+//             logger.info(`increaseParticipantCount duration: ${durationIncreaseCount}ms`);
+//         }
+
+//         const startSaveRecord = Date.now();
 //         await saveParticipationRecord(user_id, event_code);
-//         return res.status(200).json({ message: "saved successfully" })
+//         const durationSaveRecord = Date.now() - startSaveRecord;
+//         logger.info(`saveParticipationRecord duration: ${durationSaveRecord}ms`);
+
+//         return res.status(200).json({ message: "saved successfully" });
 //     } catch (err) {
-//         console.error(err)
-//         return res.status(500).json({ error: err.message })
+//         logger.error(err.message);
+//         return res.status(500).json({ error: err.message });
 //     }
 // }
-
-const logger = require('../../middleware/logger');
-const { hashPassword , verifyPassword } = require("../../middleware/password");
-
-const saveParticipation = async (req, res) => {
-    const { user_id } = req.decoded;
-    const { event_code } = req.body;
-
-    try {
-        const startCheckEvent = Date.now();
-        const is_event = await checkEventByEventCode(event_code);
-        const durationCheckEvent = Date.now() - startCheckEvent;
-        logger.info(`checkEventByEventCode duration: ${durationCheckEvent}ms`);
-
-        if (!is_event) {
-            return res.status(402).json({ code: 402, error: "존재하지 않는 이벤트 코드입니다." });
-        }
-
-        const startCheckDuplication = Date.now();
-        const is_duplication = await checkParticipationDuplication(user_id, event_code);
-        const durationCheckDuplication = Date.now() - startCheckDuplication;
-        logger.info(`checkParticipationDuplication duration: ${durationCheckDuplication}ms`);
-
-        if (is_duplication) {
-            return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." });
-        }
-
-        const isTalkConcert = event_code.startsWith("SCHUSWCU1stAF_GraduatedTalkConcert");
-
-        let results = null;
-        if (isTalkConcert) {
-            const startFindParticipant = Date.now();
-            results = await findParticipantStartingWithTalkConcert(event_code, user_id);
-            const durationFindParticipant = Date.now() - startFindParticipant;
-            logger.info(`findParticipantStartingWithTalkConcert duration: ${durationFindParticipant}ms`);
-        }
-
-        if (!results) {
-            const startIncreaseCount = Date.now();
-            await increaseParticipantCount(user_id);
-            const durationIncreaseCount = Date.now() - startIncreaseCount;
-            logger.info(`increaseParticipantCount duration: ${durationIncreaseCount}ms`);
-        }
-
-        const startSaveRecord = Date.now();
-        await saveParticipationRecord(user_id, event_code);
-        const durationSaveRecord = Date.now() - startSaveRecord;
-        logger.info(`saveParticipationRecord duration: ${durationSaveRecord}ms`);
-
-        return res.status(200).json({ message: "saved successfully" });
-    } catch (err) {
-        logger.error(err.message);
-        return res.status(500).json({ error: err.message });
-    }
-}
 
 const login = async (req, res, next) => {
     const { major, name, student_code, password } = req.body
