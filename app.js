@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const https = require('https')
 const fs    = require('fs');
 const express = require('express');
 const path = require('path');
@@ -14,9 +15,8 @@ const { sequelize } = require('./src/database');
 
 const app = express();
 
-app.set('port', process.env.PORT || 9999);
+app.set('port', process.env.PORT);
 
-// app.use(express.static(path.join(__dirname , 'public')))
 app.use('/fonts', express.static(path.join(__dirname, 'fonts')));
 app.use('/img', express.static(path.join(__dirname, 'img')));
 
@@ -69,8 +69,18 @@ app.use((err, req, res, next) => {
 });
 
 
-const server = app.listen(app.get('port'), () => {
+// const server = app.listen(app.get('port'), () => {
+//   console.log(app.get('port'), '번 포트에서 대기중');
+// });
+
+
+const options = {
+  key:  fs.readFileSync(process.env.univPrivateKey),
+  cert: fs.readFileSync(process.env.univPublicKey),
+  ca:   fs.readFileSync(process.env.univCAkey),
+}
+const server = https.createServer(options, app);
+
+server.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기중');
 });
-
-

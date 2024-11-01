@@ -14,5 +14,8 @@ router.get('/' , (req,res) => {
     res.send("hihi");
 })
 
+router.get('/favicon.ico', (req, res) => {
+    res.sendStatus(204); // 빈 응답
+});
 
 module.exports = router;
