@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             student_code : {
                 type : DataTypes.STRING,
                 allowNull : false,
-                // unique : true,
+                unique : true,
             },
 
             major: {
@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
             },
 
             name : {
+                type : DataTypes.STRING,
+                allowNull: false,
+            },
+
+            password: {
                 type : DataTypes.STRING,
                 allowNull: false,
             },
