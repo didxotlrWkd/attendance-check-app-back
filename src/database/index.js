@@ -37,6 +37,8 @@ db.DrawnUser = require('./user/drawnUser')(sequelize, Sequelize);
 // jwt
 db.RefreshToken = require('./jwt/refreshToken')(sequelize, Sequelize);
 db.RefreshTokenBlackList = require('./jwt/refreshTokenBlackList')(sequelize, Sequelize);
+db.AccessToken = require('./jwt/accessToken')(sequelize, Sequelize);
+db.AccessTokenBlackList = require('./jwt/accessTokenBlackList')(sequelize, Sequelize);
 
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {

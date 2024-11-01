@@ -9,3 +9,5 @@ sequelize-cli/
 *.xlsx
 config/
 
+*.json
+*.yaml
