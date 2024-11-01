@@ -12,3 +12,4 @@ config/
 *.json
 *.yaml
 key/
+app.js
