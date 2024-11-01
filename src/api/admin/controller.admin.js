@@ -114,7 +114,6 @@ const editUserPage = async(req,res) => {
 const deleteUserByAdmin = async(req,res) => {
     try {
         const { user_id } = req.body
-        console.log(user_id)
         await deleteUserInfo(user_id)
 
         return res.render('adminDashboard', {

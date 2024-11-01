@@ -7,7 +7,6 @@ const saveAccessToken = require('../service.jwt/saveAccessToken');
 module.exports = async (req, res, next) => {
   try {
     const user_id = req.user_id || req.body.user_id
-    console.log(user_id)
 
     const is_user = await findUserById(user_id)
     if (!is_user) {
