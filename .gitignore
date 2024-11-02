@@ -9,7 +9,8 @@ sequelize-cli/
 *.xlsx
 config/
 
-*.json
+real_scenarios.json
+
 *.yaml
 key/
 
