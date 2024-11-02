@@ -16,12 +16,10 @@ const saveParticipationRecord = require("./service.user/saveParticipationRecord"
 const findRefreshTokenByUserId = require('../jwt/service.jwt/findRefreshTokenByUserId')
 const createRefreshTokenBlackList = require('../jwt/service.jwt/createRefreshBlackList');
 
-const logger = require('../../middleware/logger');
-const { hashPassword , verifyPassword } = require("../../middleware/password");
-
+const { hashPassword, verifyPassword } = require("../../middleware/password");
 
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
-const identifyUser = require("../../database/user/dao/user/identifyUser");
+
 const { encrypt } = require("../../utils/crypt");
 
 const checkAttendance = async (req, res) => {
@@ -38,10 +36,9 @@ const checkAttendance = async (req, res) => {
 }
 
 const saveParticipation = async (req, res) => {
-    const { user_id } = req.decoded;
-
-    const { event_code } = req.body;
     try {
+        const { user_id } = req.decoded;
+        const { event_code } = req.body;
 
         const is_event = await checkEventByEventCode(event_code)
         if (!is_event) {
@@ -53,14 +50,6 @@ const saveParticipation = async (req, res) => {
             return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." })
         }
 
-        // const isTalkConcert = event_code.startsWith("SCHUSWCU1stAF_GraduatedTalkConcert");
-
-        // const results = isTalkConcert ? await findParticipantStartingWithTalkConcert(event_code, user_id) : null;
-
-        // if (!results) {
-        //     await increaseParticipantCount(user_id);
-        // }
-
         await increaseParticipantCount(user_id);
         await saveParticipationRecord(user_id, event_code);
         return res.status(200).json({ message: "saved successfully" })
@@ -71,96 +60,45 @@ const saveParticipation = async (req, res) => {
 }
 
 
-// const saveParticipation = async (req, res) => {
-//     const { user_id } = req.decoded;
-//     const { event_code } = req.body;
-
-//     try {
-//         const startCheckEvent = Date.now();
-//         const is_event = await checkEventByEventCode(event_code);
-//         const durationCheckEvent = Date.now() - startCheckEvent;
-//         logger.info(`checkEventByEventCode duration: ${durationCheckEvent}ms`);
-
-//         if (!is_event) {
-//             return res.status(402).json({ code: 402, error: "존재하지 않는 이벤트 코드입니다." });
-//         }
-
-//         const startCheckDuplication = Date.now();
-//         const is_duplication = await checkParticipationDuplication(user_id, event_code);
-//         const durationCheckDuplication = Date.now() - startCheckDuplication;
-//         logger.info(`checkParticipationDuplication duration: ${durationCheckDuplication}ms`);
-
-//         if (is_duplication) {
-//             return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." });
-//         }
-
-//         const isTalkConcert = event_code.startsWith("SCHUSWCU1stAF_GraduatedTalkConcert");
-
-//         let results = null;
-//         if (isTalkConcert) {
-//             const startFindParticipant = Date.now();
-//             results = await findParticipantStartingWithTalkConcert(event_code, user_id);
-//             const durationFindParticipant = Date.now() - startFindParticipant;
-//             logger.info(`findParticipantStartingWithTalkConcert duration: ${durationFindParticipant}ms`);
-//         }
-
-//         if (!results) {
-//             const startIncreaseCount = Date.now();
-//             await increaseParticipantCount(user_id);
-//             const durationIncreaseCount = Date.now() - startIncreaseCount;
-//             logger.info(`increaseParticipantCount duration: ${durationIncreaseCount}ms`);
-//         }
-
-//         const startSaveRecord = Date.now();
-//         await saveParticipationRecord(user_id, event_code);
-//         const durationSaveRecord = Date.now() - startSaveRecord;
-//         logger.info(`saveParticipationRecord duration: ${durationSaveRecord}ms`);
-
-//         return res.status(200).json({ message: "saved successfully" });
-//     } catch (err) {
-//         logger.error(err.message);
-//         return res.status(500).json({ error: err.message });
-//     }
-// }
-
 const login = async (req, res, next) => {
-    const { major, name, student_code, password } = req.body
+    const { major, name, student_code, password } = req.body;
+
     try {
-        const crypt_name = encrypt(name)
-        const crypt_student_code = encrypt(student_code)
-    
-        const is_user_student_code = await findUserByStudentCode({ student_code: crypt_student_code })
+        const crypt_name = encrypt(name);
+        const crypt_student_code = encrypt(student_code);
 
-        if (is_user_student_code) {
+        const is_user = await findUserByStudentCode({ student_code: crypt_student_code });
 
-            const is_user = await identifyUser({ student_code: crypt_student_code, name: crypt_name, major })
-
-            if (is_user_student_code) {
-
-                const is_user = await identifyUser({ student_code: crypt_student_code, name: crypt_name, major })
-    
-                if (is_user) {
-                    const hashedPassword = is_user.password;
-                    const isPasswordValid = await verifyPassword(password, hashedPassword);
-                    if (isPasswordValid) {
-                        req.user_id = is_user.id;
-                        return next();
-                    } else {
-                        return res.status(405).json({ message: "비밀번호가 일치하지 않습니다." });
-                    }
-                } else {
-                    return res.status(406).json({ message: "저장된 회원정보와 일치하지 않습니다." })
-                }
+        if (is_user) {
+            if (is_user.name !== crypt_name || is_user.major !== major) {
+                return res.status(406).json({ message: "저장된 회원정보와 일치하지 않습니다." });
             }
-        }
-        const newUser = await createUser({ major, name: crypt_name, student_code: crypt_student_code, password: await hashPassword(password) });
-        req.user_id = newUser.id;
+
+            const is_password_valid = await verifyPassword(password, is_user.password);
+
+            if (is_password_valid) {
+                req.user_id = is_user.id;
+                return next();
+            } else {
+                return res.status(405).json({ message: "비밀번호가 일치하지 않습니다." });
+            }
+        } 
+
+        const new_user = await createUser({
+            major,
+            name: crypt_name,
+            student_code: crypt_student_code,
+            password: await hashPassword(password)
+        });
+        
+        req.user_id = new_user.id;
         return next();
     } catch (err) {
-        console.error(err)
-        return res.status(500).json({ error: err.message })
+        console.error(err);
+        return res.status(500).json({ error: err.message });
     }
-}
+};
+
 
 const logout = async (req, res, next) => {
     try {

@@ -16,4 +16,4 @@ key/
 
 app.js
 
-.log
+*.log

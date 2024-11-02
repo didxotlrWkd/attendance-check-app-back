@@ -9,11 +9,6 @@ const config = {
     host: process.env.DB_HOST,
     dialect: 'mysql',
     timezone: '+09:00', // 한국 시간 "asia/seoul"
-    // dialectOptions: {
-    //     charset: 'utf8mb4',
-    //     dateStrings: true,
-    //     typeCast: true,
-    // },
     define: {
         underscored: false,
         freezeTableName: false,
@@ -23,6 +18,11 @@ const config = {
         paranoid: false,
         createdAt: true,
         updatedAt: false,
+    },
+    logging: (msg) => {
+        if (msg.includes('ERROR')) {
+            console.error(msg); // 에러 메시지만 출력
+        }
     },
 };
 
