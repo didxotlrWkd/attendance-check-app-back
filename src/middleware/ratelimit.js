@@ -5,7 +5,7 @@ exports.loginLimiter = rateLimit({
    max: 10, 
    statusCode: 429, 
    keyGenerator: (req) => {
-      return req.ip + '-' + (req.body ? req.body.student_code : 'anonymous'); 
+      return req.ip + '-' + (req.body.student_code ? req.body.student_code : 'anonymous'); 
    },
    handler(req, res) {
       res.status(this.statusCode).json({
@@ -21,7 +21,6 @@ exports.userLimiter = rateLimit({
    max: 50, 
    statusCode: 430, 
    keyGenerator: (req) => {
-      console.log(req.ip + '-' + (req.decoded.user_id ? req.decoded.user_id : 'anonymous'))
       return req.ip + '-' + (req.decoded.user_id ? req.decoded.user_id : 'anonymous'); 
    },
    handler(req, res) {
