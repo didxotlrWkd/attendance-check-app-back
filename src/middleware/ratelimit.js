@@ -1,6 +1,3 @@
-// ratelimit.js
-const rateLimit = require('express-rate-limit');
-
 const rateLimit = require('express-rate-limit');
 
 exports.loginLimiter = rateLimit({
@@ -20,9 +17,9 @@ exports.loginLimiter = rateLimit({
 
 
 exports.userLimiter = rateLimit({
-   windowMs: 60 * 1000, // 1분 간격
-   max: 50, // windowMs 동안 최대 호출 횟수
-   statusCode: 430, // 기본 상태 코드 설정
+   windowMs: 60 * 1000, 
+   max: 50, 
+   statusCode: 430, 
    keyGenerator: (req) => {
       console.log(req.ip + '-' + (req.user_id ? req.user_id : 'anonymous'))
       return req.ip + '-' + (req.user_id ? req.user_id : 'anonymous'); 
