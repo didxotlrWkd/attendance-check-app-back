@@ -6,6 +6,10 @@ const router = express.Router()
 
 const authToken = require('../../middleware/authToken');
 const generateToken = require('../jwt/controller.jwt/generateToken');
+const ratelimit = require('../../middleware/ratelimit');
+
+
+router.use(ratelimit.apiLimiter)
 
 router.post('/login', login, generateToken)
 
