@@ -3,9 +3,21 @@ const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser,
 
 const {isLoggedIn, isNotLoggedIn} = require('../../middleware/checkSessionLogin')
 const checkEventByEventCode = require('../../database/event/dao/checkEventByEventCode')
-const { deleteUser } = require('../user/controller.user')
+const session = require('express-session');
+
+const sessionMiddleware = session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    },
+});
 
 const router = express.Router()
+
+router.use(sessionMiddleware)
 
 router.get('/', mainPage)
 
