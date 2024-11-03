@@ -8,7 +8,26 @@ const ratelimit = require('../../middleware/ratelimit');
 
 const session = require('express-session');
 
+const RedisStore = require("connect-redis").default
+const redis = require('redis');
+
+
+const redisClient = redis.createClient({
+    url: `redis://${process.env.REDIS_ENDPOINT}:${process.env.REDIS_PORT}`,
+    password: process.env.REDIS_PASSWORD
+})
+
+redisClient.connect()
+    .then(() => {
+        console.log('Redis client connected successfully');
+    })
+    .catch((err) => {
+        console.error('Redis connection error:', err);
+    });
+
+
 const sessionMiddleware = session({
+    store: new RedisStore({ client: redisClient }),
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET,
