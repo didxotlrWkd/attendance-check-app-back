@@ -3,6 +3,9 @@ const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser,
 
 const {isLoggedIn, isNotLoggedIn} = require('../../middleware/checkSessionLogin')
 const checkEventByEventCode = require('../../database/event/dao/checkEventByEventCode')
+
+const ratelimit = require('../../middleware/ratelimit');
+
 const session = require('express-session');
 
 const sessionMiddleware = session({
@@ -17,7 +20,10 @@ const sessionMiddleware = session({
 
 const router = express.Router()
 
+
 router.use(sessionMiddleware)
+
+router.use(ratelimit.adminLimiter)
 
 router.get('/', mainPage)
 

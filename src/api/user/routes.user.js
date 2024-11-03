@@ -7,7 +7,9 @@ const router = express.Router()
 const authToken = require('../../middleware/authToken');
 const generateToken = require('../jwt/controller.jwt/generateToken');
 const ratelimit = require('../../middleware/ratelimit');
+const allowSpecificAgent = require('../../middleware/allowSpecificAgent');
 
+router.use(allowSpecificAgent)
 
 router.post('/login',ratelimit.loginLimiter, login, generateToken)
 

@@ -31,5 +31,16 @@ exports.userLimiter = rateLimit({
    },
 });
 
+exports.adminLimiter = rateLimit({
+   windowMs: 60 * 1000, 
+   max: 100, 
+   statusCode: 431,
+   handler(req, res) {
+      res.status(this.statusCode).json({
+         code: this.statusCode,
+         message: '60초에 50번만 요청할 수 있습니다.',
+      });
+   },
+})
 
 
