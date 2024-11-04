@@ -20,6 +20,8 @@ const { hashPassword, verifyPassword } = require("../../middleware/password");
 
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
 
+const {AccessToken} = require('../../database')
+
 const { encrypt } = require("../../utils/crypt");
 const createAccessBlackList = require("../jwt/service.jwt/createAccessBlackList");
 

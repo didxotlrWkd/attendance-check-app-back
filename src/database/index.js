@@ -5,7 +5,7 @@ const db = {};
 const config = {
     username: process.env.DB_USER,
     password: process.env.DB_PASW,
-    database: process.env.DB_BASE,
+    database: process.env.NODE_ENV === 'production' ? process.env.DB_BASE_PRODUCTION : process.env.DB_BASE_DEVELOP,
     host: process.env.DB_HOST,
     dialect: 'mysql',
     timezone: '+09:00', // 한국 시간 "asia/seoul"
