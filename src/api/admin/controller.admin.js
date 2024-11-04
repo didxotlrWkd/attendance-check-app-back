@@ -11,6 +11,7 @@ const drawRandomUserParticipant5 = require('../../database/user/dao/user/drawRan
 const drawRandomUserSelectedNumber = require('../../database/user/dao/user/drawRandomUserSelectedNumber');
 const findUserById = require('../../database/user/dao/user/findUserById');
 const findUserByStudentCode = require('../../database/user/dao/user/findUserByStudentCode');
+const { hashPassword } = require('../../middleware/password');
 const { decrypt, encrypt } = require('../../utils/crypt');
 const createExelFile = require('./service.admin/createExelFile');
 const decryptUserInfo = require('./service.admin/decryptUserInfo');
@@ -89,6 +90,29 @@ const editUser = async (req, res) => {
 
     } catch (err) {
         console.error(err)
+        return res.render('adminDashboard', {
+            message: err.message
+        })
+    }
+}
+
+const editUserPassword = async(req,res) => {
+    try{
+        const {user_id, new_password} = req.body;
+        const user = await findUserById(user_id)
+        console.log(user.password)
+        await user.update({
+            password : await hashPassword(new_password)
+        })
+        const decrypt_user_info = await decryptUserInfo([user])
+
+        console.log(user.password)
+        return res.render('adminDashboard', {
+            users : decrypt_user_info,
+            message : "비밀번호가 수정되었습니다"
+        })
+    }catch(err){
+        console.error(err);
         return res.render('adminDashboard', {
             message: err.message
         })
@@ -343,6 +367,7 @@ module.exports = {
     drawRandomUserResultPageForProjector,
     editUser,
     deleteUserByAdmin,
-    editUserPage
+    editUserPage,
+    editUserPassword
 
 }

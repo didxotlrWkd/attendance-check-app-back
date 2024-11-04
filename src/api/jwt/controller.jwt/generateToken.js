@@ -17,7 +17,7 @@ module.exports = async (req, res, next) => {
     let refresh_token = generateToken.refresh(user_id);
     // refreshToken 저장
     await saveAccessToken({access_token , user_id})
-    await saveRefreshToken({refresh_token, user_id})
+    // await saveRefreshToken({refresh_token, user_id})
     //response
     return res.status(200).json({
       code: 200,

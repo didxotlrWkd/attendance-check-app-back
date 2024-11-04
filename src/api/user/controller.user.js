@@ -42,12 +42,12 @@ const saveParticipation = async (req, res) => {
 
         const is_event = await checkEventByEventCode(event_code)
         if (!is_event) {
-            return res.status(402).json({ code: 402, error: "존재하지 않는 이벤트 코드입니다." })
+            return res.status(451).json({ code: 451, error: "존재하지 않는 이벤트 코드입니다." })
         }
 
         const is_duplication = await checkParticipationDuplication(user_id, event_code);
         if (is_duplication) {
-            return res.status(401).json({ code: 401, error: "이미 등록된 코드입니다." })
+            return res.status(452).json({ code: 452, error: "이미 등록된 코드입니다." })
         }
 
         await increaseParticipantCount(user_id);
