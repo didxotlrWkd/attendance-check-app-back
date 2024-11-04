@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
             });
         }
         const is_blacklist_access_token = await checkAccessTokenBlackList(req.headers.authorization)
-
+        
         if(is_blacklist_access_token) {
             return res.status(412).json({
                 code : 412,

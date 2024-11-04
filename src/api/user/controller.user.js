@@ -21,6 +21,7 @@ const { hashPassword, verifyPassword } = require("../../middleware/password");
 const decryptUserInfo = require("../admin/service.admin/decryptUserInfo");
 
 const { encrypt } = require("../../utils/crypt");
+const createAccessBlackList = require("../jwt/service.jwt/createAccessBlackList");
 
 const checkAttendance = async (req, res) => {
     const { user_id } = req.decoded;
@@ -120,7 +121,14 @@ const logout = async (req, res, next) => {
 const deleteUser = async (req, res) => {
     try {
         const { user_id } = req.decoded
+        const token = req.headers.authorization
         await deleteUserInfo(user_id)
+        
+        await createAccessBlackList(token)
+        await AccessToken.destroy({
+            where: { user_id },
+            force: true
+        });
 
         res.status(200).json({ message: 'user delete successfully' })
     } catch (err) {
