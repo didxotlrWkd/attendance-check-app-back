@@ -35,6 +35,14 @@
         margin-bottom: 10px;
     }
 
+    .sidebar {
+            width: 300px;
+            padding: 20px;
+            background-color: #72c6ef;
+            border-right: 1px solid #ccc;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
     input.form-control {
         width: 99%;
         /* 전체 너비 */
@@ -68,6 +76,20 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+    }
+
+    #eventTable th:nth-child(1), /* 행사 코드 */
+    #eventTable td:nth-child(1) { /* 행사 코드 */
+        width: 25%; /* 행사 코드의 너비를 15%로 설정 */
+        word-break: break-all; /* 단어가 길어져도 줄 바꿈 */
+        white-space: normal; /* 기본 줄 바꿈 동작 사용 */
+    }
+
+    #eventTable th:nth-child(3), /* 행사 코드 */
+    #eventTable td:nth-child(3) { /* 행사 코드 */
+        width: 25%; /* 행사 코드의 너비를 15%로 설정 */
+        word-break: break-all; /* 단어가 길어져도 줄 바꿈 */
+        white-space: normal; /* 기본 줄 바꿈 동작 사용 */
     }
 
     .table th,
@@ -172,7 +194,7 @@
         <tbody>
             {% for event in events %}
             <tr>
-                <td>{{ event.event_code }}</td>
+                <td style="white-space: pre-wrap;" id="code">{{ event.event_code }}</td>
                 <td>{{ event.event_name }}</td>
                 <td style="white-space: pre-wrap;">{{ event.description }}</td>
                 <td>{{ event.location }}</td>
