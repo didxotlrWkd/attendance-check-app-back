@@ -1,16 +1,10 @@
-const {User} = require('../../../../database')
-module.exports = async(id) => {
-    try{
-        const user = await User.findOne({
-            where : {
-                id 
-            }
-        })
-
-        await user.update({participant_count : user.participant_count + 1})
-
+const { User } = require('../../../../database')
+module.exports = async (id) => {
+    try {
+        const user = await User.findByPk(id);
+        await user.increment('participant_count');
         return user
-    }catch(err) {
+    } catch (err) {
         throw err
     }
 }

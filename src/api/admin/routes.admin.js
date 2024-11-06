@@ -41,7 +41,7 @@ const sessionMiddleware = session({
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
-        // secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
     },
 });
 
@@ -154,37 +154,40 @@ router.get('/download/student-info', isLoggedIn, downloadExcel)
 
 router.get('/logout', isLoggedIn, logout)
 
-router.post('/encrypt' , (req,res) => {
-    try{
-        const data = encrypt(req.body.data)
-        res.send(data)
-    }catch(err){
-        res.send('sorry')
-    }
-})
+// router.post('/encrypt' , (req,res) => {
+//     try{
+//         const data = encrypt(req.body.data)
+//         res.send(data)
+//     }catch(err){
+//         res.send('sorry')
+//     }
+// })
 
-router.post('/add/attendance', async (req,res) => {
-    try{
-        const {user_id , event_code_id} = req.body
-        const event_code = {
-            1 : '1stAcademicFesival,OpeningCeremony,SWConvergenceCollege,SoonchunhyangUniversity',
-            2 : '1stAcademicFesival,ProjectPresentationParticipation,SWConvergenceCollege,SoonchunhyangUniversity',
-            3 : '1stAcademicFesival,GraduatedStudentTalkConcert,SWConvergenceCollege,SoonchunhyangUniversity',
-            4 : '1stAcademicFesival,MadeByStudentsGameContest,SWConvergenceCollege,SoonchunhyangUniversity',
-            5 : '1stAcademicFesival,IndustrialSpecialistSpecialLecture,SWConvergenceCollege,SoonchunhyangUniversity'
-        }
-        await Participant.create({
-            user_id,
-            event_code : event_code[event_code_id]
-        })
-        await increaseParticipantCount(user_id)
+// router.post('/add/attendance', async (req,res) => {
+//     try{
+//         const {user_id , event_code_id} = req.body
+//         const event_code = {
+//             1 : '1stAcademicFesival,OpeningCeremony,SWConvergenceCollege,SoonchunhyangUniversity',
+//             2 : '1stAcademicFesival,ProjectPresentationParticipation,SWConvergenceCollege,SoonchunhyangUniversity',
+//             3 : '1stAcademicFesival,GraduatedStudentTalkConcert,SWConvergenceCollege,SoonchunhyangUniversity',
+//             4 : '1stAcademicFesival,MadeByStudentsGameContest,SWConvergenceCollege,SoonchunhyangUniversity',
+//             5 : '1stAcademicFesival,IndustrialSpecialistSpecialLecture,SWConvergenceCollege,SoonchunhyangUniversity'
+//         }
 
-        res.send("ok")
-    }catch(err){
-        console.error(err)
-        res.status(500).json({error : err.message})
-    }
-})
+//         event_code_id.map(async (id) => {
+//             await Participant.create({
+//                 user_id,
+//                 event_code : event_code[id]
+//             })
+//             await increaseParticipantCount(user_id)
+//         })
+
+//         res.send("ok")
+//     }catch(err){
+//         console.error(err)
+//         res.status(500).json({error : err.message})
+//     }
+// })
 
 
 // router.get('/event/delete', async (req, res) => {

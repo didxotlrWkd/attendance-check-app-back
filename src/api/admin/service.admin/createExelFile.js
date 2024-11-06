@@ -6,7 +6,7 @@ module.exports = async (students) => {
             학번: student.student_code,
             이름: student.name,
             학과: student.major,
-            참여횟수: student.participant_count
+            참여횟수: student.participant_count,
         }));
         const workbook = XLSX.utils.book_new();
         const worksheet = XLSX.utils.json_to_sheet(data);

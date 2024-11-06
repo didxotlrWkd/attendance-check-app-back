@@ -10,7 +10,7 @@ const access = (user_id) => {
             type: 'access_token',
             user_id: user_id,
         }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: "15d", // 만료시간 15분
+            expiresIn: "15m", // 만료시간 15분
             issuer: 'hongsi',
         });
         return token
