@@ -147,6 +147,7 @@
         <h3 style="margin: 10px 0; padding: 0;">{{ message}}</h3>
         {% endif %}
         <form action="/admin/draw/random-user/project" method="POST" onsubmit="setDefaultValue()">
+            <input type="hidden" name="draw_count" id="draw_count" value="{{draw_count}}">
             <button type="submit">추첨하기</button>
         </form>
     </div>

@@ -13,6 +13,7 @@ const findUserById = require('../../database/user/dao/user/findUserById');
 const findUserByStudentCode = require('../../database/user/dao/user/findUserByStudentCode');
 const { hashPassword } = require('../../middleware/password');
 const { decrypt, encrypt } = require('../../utils/crypt');
+const router = require('./routes.admin');
 const createExelFile = require('./service.admin/createExelFile');
 const decryptUserInfo = require('./service.admin/decryptUserInfo');
 
@@ -197,7 +198,9 @@ const drawRandomUserPage = async (req, res) => {
 
 const drawRandomUserPageForProjector = async (req, res) => {
     try {
-        return res.render('drawPageForProject')
+        return res.render('drawPageForProject', {
+            draw_count : 1
+        })
 
     } catch (err) {
         res.status(500).json({ error: err.message })
@@ -216,6 +219,7 @@ const drawRandomUserResultPageForProjector = async (req, res) => {
         "animate__animated animate__fadeInDown"
     ];
     try {
+        const {draw_count} = req.body
         const drawn_ids = await checkDrawnUser()
 
         const encrypt_drawn_user = await drawRandomUserParticipant5({ drawn_ids })
@@ -229,7 +233,8 @@ const drawRandomUserResultPageForProjector = async (req, res) => {
 
             return res.render('drawPageForProject', {
                 users: decrypt_drawn_user,
-                animation_class: selectedAnimation
+                animation_class: selectedAnimation,
+                draw_count
             })
         }
         return res.render('drawPageForProject', {
@@ -347,6 +352,27 @@ const downloadExcel = async (req, res) => {
     }
 }
 
+const searchUserById = async(req,res) => {
+    try{
+        const {user_id} = req.body
+        const user = await findUserById(user_id)
+        if (!user) {
+            throw new Error("존재하지 않는 아이디입니다")
+        }
+        const decrypt_user_info = await decryptUserInfo([user])
+
+        return res.render('adminDashboard', {
+            users: decrypt_user_info
+        })
+    }catch (err) {
+        console.error(err)
+        return res.render('adminDashboard', {
+            message: err.message
+        })
+    }
+}
+
+
 
 module.exports = {
     adminLogin,
@@ -368,6 +394,7 @@ module.exports = {
     editUser,
     deleteUserByAdmin,
     editUserPage,
-    editUserPassword
+    editUserPassword,
+    searchUserById
 
 }

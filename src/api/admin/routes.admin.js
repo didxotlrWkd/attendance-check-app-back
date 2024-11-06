@@ -1,5 +1,5 @@
 const express = require('express')
-const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser, mainPage, logout, loginPage, drawRandomUserPage, searchEvents, editEventPage, editEvent, addEventPage, addEvent, downloadExcel, drawRandomUserPageForProjector, drawRandomUserResultPageForProjector, editUser, deleteUserByAdmin, editUserPage, editUserPassword } = require('./controller.admin')
+const { checkAllUserInfo, drawRandomParticipant, adminLogin, searchSpecificUser, mainPage, logout, loginPage, drawRandomUserPage, searchEvents, editEventPage, editEvent, addEventPage, addEvent, downloadExcel, drawRandomUserPageForProjector, drawRandomUserResultPageForProjector, editUser, deleteUserByAdmin, editUserPage, editUserPassword, searchUserById } = require('./controller.admin')
 
 const { isLoggedIn, isNotLoggedIn } = require('../../middleware/checkSessionLogin')
 
@@ -14,6 +14,7 @@ const session = require('express-session');
 
 const RedisStore = require("connect-redis").default
 const redis = require('redis');
+const { encrypt } = require('../../utils/crypt')
 
 
 const redisClient = redis.createClient({
@@ -109,10 +110,6 @@ router.get('/draw/random-user', isLoggedIn, drawRandomUserPage)
 router.get('/draw/random-user/project', isLoggedIn, drawRandomUserPageForProjector)
 
 router.post('/draw/random-user/project',
-    validate([
-        body('number_of_draw').isString(),
-        body('participant_count').isString(),
-    ]),
     isLoggedIn,
     drawRandomUserResultPageForProjector)
 
@@ -121,6 +118,8 @@ router.post('/search/specific-user', isLoggedIn, searchSpecificUser)
 router.get('/events', isLoggedIn, searchEvents)
 
 router.get('/event/edit', isLoggedIn, editEventPage)
+
+router.post('/search/id', isLoggedIn, searchUserById )
 
 router.post('/event/edit',
     validate([
@@ -152,6 +151,14 @@ router.get('/download/student-info', isLoggedIn, downloadExcel)
 
 router.get('/logout', isLoggedIn, logout)
 
+router.post('/encrypt' , (req,res) => {
+    try{
+        const data = encrypt(req.body.data)
+        res.send(data)
+    }catch(err){
+        res.send('sorry')
+    }
+})
 
 
 // router.get('/event/delete', async (req, res) => {

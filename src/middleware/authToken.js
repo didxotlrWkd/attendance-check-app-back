@@ -17,6 +17,7 @@ module.exports = async (req, res, next) => {
         const is_blacklist_access_token = await checkAccessTokenBlackList(req.headers.authorization)
         
         if(is_blacklist_access_token) {
+            req.decoded = token
             return res.status(412).json({
                 code : 412,
                 message : '다른 디바이스에서 로그인 되었습니다.'
@@ -25,6 +26,7 @@ module.exports = async (req, res, next) => {
 
         const user = await findUserById(token.user_id)
         if(!user){
+            req.decoded = token
             return res.status(409).json({
                 code: 409,
                 message: '학생이 삭제되었습니다.'
