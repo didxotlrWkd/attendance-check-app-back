@@ -15,6 +15,9 @@ const session = require('express-session');
 const RedisStore = require("connect-redis").default
 const redis = require('redis');
 const { encrypt } = require('../../utils/crypt')
+const { Participant } = require('../../database')
+const findUserById = require('../../database/user/dao/user/findUserById')
+const increaseParticipantCount = require('../../database/user/dao/user/increaseParticipantCount')
 
 
 const redisClient = redis.createClient({
@@ -157,6 +160,29 @@ router.post('/encrypt' , (req,res) => {
         res.send(data)
     }catch(err){
         res.send('sorry')
+    }
+})
+
+router.post('/add/attendance', async (req,res) => {
+    try{
+        const {user_id , event_code_id} = req.body
+        const event_code = {
+            1 : '1stAcademicFesival,OpeningCeremony,SWConvergenceCollege,SoonchunhyangUniversity',
+            2 : '1stAcademicFesival,ProjectPresentationParticipation,SWConvergenceCollege,SoonchunhyangUniversity',
+            3 : '1stAcademicFesival,GraduatedStudentTalkConcert,SWConvergenceCollege,SoonchunhyangUniversity',
+            4 : '1stAcademicFesival,MadeByStudentsGameContest,SWConvergenceCollege,SoonchunhyangUniversity',
+            5 : '1stAcademicFesival,IndustrialSpecialistSpecialLecture,SWConvergenceCollege,SoonchunhyangUniversity'
+        }
+        await Participant.create({
+            user_id,
+            event_code : event_code[event_code_id]
+        })
+        await increaseParticipantCount(user_id)
+
+        res.send("ok")
+    }catch(err){
+        console.error(err)
+        res.status(500).json({error : err.message})
     }
 })
 
