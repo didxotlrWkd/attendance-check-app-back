@@ -9,10 +9,12 @@ module.exports = async () => {
                 {
                     model: Participant,
                     attributes: ['event_code'],
+                    required: false,
                     include: [
                         {
                             model: Event,
-                            attributes: ['event_name']
+                            attributes: ['event_name'],
+                            required: false,
                         }
                     ]
                 }

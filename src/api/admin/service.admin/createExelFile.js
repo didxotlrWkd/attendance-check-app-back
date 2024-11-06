@@ -17,8 +17,8 @@ module.exports = async (students) => {
 
             // 각 이벤트에 대해 참여 여부 설정
             eventNames.forEach(eventName => {
-                participation[eventName] = student.participants.some(participant =>
-                    participant.event.includes(eventName)
+                participation[eventName] = student.participants.some(participant => 
+                    participant.event && participant.event.event_name === eventName
                 ) ? 'O' : 'X';
             });
 

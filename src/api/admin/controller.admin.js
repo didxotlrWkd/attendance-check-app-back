@@ -339,7 +339,7 @@ const downloadExcel = async (req, res) => {
     try {
         const encrypt_user_info = await checkUserInfoByParticipantCount()
         const decrypt_user_info = await decryptUserInfo(encrypt_user_info)
-        console.log(decrypt_user_info[0])
+        console.log(decrypt_user_info[700])
         const excelPath = await createExelFile(decrypt_user_info)
 
         res.download(excelPath, (err) => {
@@ -348,7 +348,6 @@ const downloadExcel = async (req, res) => {
                 res.status(500).send('파일 다운로드에 실패했습니다.');
             }
         });
-        res.send('ok')
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: err.message });
