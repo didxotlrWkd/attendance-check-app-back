@@ -199,7 +199,7 @@ const drawRandomUserPage = async (req, res) => {
 const drawRandomUserPageForProjector = async (req, res) => {
     try {
         return res.render('drawPageForProject', {
-            draw_count : 1
+            draw_count : 0
         })
 
     } catch (err) {
@@ -220,6 +220,7 @@ const drawRandomUserResultPageForProjector = async (req, res) => {
     ];
     try {
         const {draw_count} = req.body
+        const drawCountNumber = Number(draw_count);
         const drawn_ids = await checkDrawnUser()
 
         const encrypt_drawn_user = await drawRandomUserParticipant5({ drawn_ids })
@@ -234,7 +235,7 @@ const drawRandomUserResultPageForProjector = async (req, res) => {
             return res.render('drawPageForProject', {
                 users: decrypt_drawn_user,
                 animation_class: selectedAnimation,
-                draw_count
+                draw_count : drawCountNumber + 1
             })
         }
         return res.render('drawPageForProject', {
